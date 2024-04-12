@@ -81,13 +81,5 @@ namespace Lab1
                 FindAndDeleteItem(itemToDelete, item);
             }
         }
-
-        internal string ReadFile(string path)
-        {
-            using (var textReader = File.OpenText(path))
-            {
-                return textReader.ReadToEnd();
-            }
-        }
     }
 }

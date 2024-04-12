@@ -1,4 +1,7 @@
 ﻿using Lab1.Dialogs;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,25 +13,28 @@ namespace Lab1
     /// </summary>
     public partial class MainWindow : Window
     {
-        private readonly TreeMenuService _treeMenuService;
-        
+        private readonly FileExplorer _fileExplorer;
+
         public MainWindow()
         {
             InitializeComponent();
-            _treeMenuService = new();
-            treeMenu.Items.Add(_treeMenuService.Menu);
+
+            _fileExplorer = new();
+
+            DataContext = _fileExplorer;
+            
+            _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
         }
 
         private void MenuItem_Click_Open(object sender, RoutedEventArgs e)
         {
             try
             {
-                var dlg = new FolderBrowserDialog() { Description = "Select directory to open" };
+                var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
 
                 if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) return;
 
-                treeMenu.Items.Clear();
-                treeMenu.Items.Add(_treeMenuService.CreateTreeMenuItem(dlg.SelectedPath));
+                _fileExplorer.OpenRoot(dlg.SelectedPath);
             }
             catch (Exception ex)
             {
@@ -52,13 +58,9 @@ namespace Lab1
         {
             try
             {
-                var selectedItem = (TreeMenuItem)((MenuItem)e.Source).DataContext;
+                var fileInfo = (FileInfoViewModel)((MenuItem)e.Source).DataContext;
 
-                if (selectedItem.IsDirectory) throw new Exception("You cannot read directiories");
-                
-                var path = selectedItem.Path;
-
-                itemTextBox.Text = _treeMenuService.ReadFile(path);
+                itemTextBox.Text = FileExplorer.OpenFile(fileInfo);
             }
             catch (Exception ex)
             {
@@ -70,9 +72,12 @@ namespace Lab1
         {
             try
             {
-                var selectedItem = (TreeMenuItem)((MenuItem)e.Source).DataContext;
+                var fileInfo = ((MenuItem)e.Source).DataContext as FileSystemInfoViewModel;
 
-                _treeMenuService.DeleteItemFromMenu(selectedItem);
+                if (fileInfo is not null)
+                {
+                    FileExplorer.Delete(fileInfo);
+                }
             }
             catch (Exception ex)
             {
@@ -84,26 +89,13 @@ namespace Lab1
         {
             try
             {
-                var parentItem = (TreeMenuItem)((MenuItem)e.Source).DataContext;
+                var parentDir = (DirectoryInfoViewModel)((MenuItem)e.Source).DataContext;
 
-                if (!parentItem.IsDirectory) throw new Exception("You can only create files within a directory");
-
-                CreateItemFormDialog inputDialog = new(parentItem);
+                var inputDialog = new CreateItemFormDialog(parentDir);
 
                 if (inputDialog.ShowDialog() is null or false) return;
 
-                var newItem = inputDialog.NewItem!;
-
-                if (newItem.IsDirectory)
-                {
-                    Directory.CreateDirectory(newItem.Path);
-                }
-                else
-                {
-                    File.CreateText(newItem.Path);
-                }
-
-                parentItem.Items.Add(newItem);
+                FileExplorer.Create(parentDir, inputDialog.NewModel, inputDialog.ModelFileAttributes);
             }
             catch (Exception ex)
             {
@@ -115,11 +107,10 @@ namespace Lab1
         {
             try
             {
-                var treeView = (System.Windows.Controls.TreeView)sender;
-
-                if((TreeMenuItem)treeView.SelectedItem is not null)
+                var fileInfo = e.NewValue as FileSystemInfoViewModel;
+                if (fileInfo is not null)
                 {
-                    FileAttributesRash.Text = ((TreeMenuItem)treeView.SelectedItem).GetRashString;
+                    FileAttributesRash.Text = fileInfo.GetRashString;
                 }
             }
             catch (Exception ex)
@@ -136,6 +127,12 @@ namespace Lab1
             MessageBoxImage icon = MessageBoxImage.Error;
 
             System.Windows.MessageBox.Show(messageBoxText, caption, button, icon, MessageBoxResult.Yes);
+        }
+
+        private void _fileExplorer_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(FileExplorer.Lang))
+                CultureResources.ChangeCulture(CultureInfo.CurrentUICulture);
         }
     }
 }

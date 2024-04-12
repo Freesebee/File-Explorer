@@ -11,47 +11,40 @@ namespace Lab1.Dialogs;
 /// </summary>
 public partial class CreateItemFormDialog : Window
 {
-    private TreeMenuItem? _newItem;
-    public TreeMenuItem? NewItem => _newItem;
-    private readonly TreeMenuItem _root;
+    public IEnumerable<FileAttributes> ModelFileAttributes => _modelFileAttributes;
+    private List<FileAttributes> _modelFileAttributes = new();
 
+    public FileSystemInfoViewModel NewModel => _newModel;
+    private FileSystemInfoViewModel _newModel;
+
+    private readonly FileSystemInfoViewModel _parent;
     public bool RadioButton1IsChecked { get; set; }
     public bool RadioButton2IsChecked { get; set; }
 
-    public CreateItemFormDialog(TreeMenuItem root)
+    public CreateItemFormDialog(FileSystemInfoViewModel parent)
     {
         InitializeComponent();
-        _root = root;
+        _parent = parent;
     }
 
     private void Button_Click_Cancel(object sender, RoutedEventArgs e)
     {
         DialogResult = false;
-        this.Close();
+        Close();
     }
 
     private void Button_Click_Ok(object sender, RoutedEventArgs e)
     {
-        var itemName = nameTextBox.Text;
-        var rootPath = new Uri(_root.Path + "\\"); //idc
-        var itemPath = new Uri(rootPath, itemName);
+        if ((bool)isReadonly.IsChecked!) _modelFileAttributes.Add(FileAttributes.ReadOnly);
+        if ((bool)isArchive.IsChecked!) _modelFileAttributes.Add(FileAttributes.Archive);
+        if ((bool)isHidden.IsChecked!) _modelFileAttributes.Add(FileAttributes.Hidden);
+        if ((bool)isSystem.IsChecked!) _modelFileAttributes.Add(FileAttributes.System);
 
-        List<FileAttributes> fileAttributes = [];
+        _newModel = (bool)IsDirectory.IsChecked!
+            ? new DirectoryInfoViewModel()
+            : new FileInfoViewModel();
 
-        if ((bool)isReadonly.IsChecked!) fileAttributes.Add(FileAttributes.ReadOnly);
-        if ((bool)isArchive.IsChecked!) fileAttributes.Add(FileAttributes.Archive);
-        if ((bool)isHidden.IsChecked!) fileAttributes.Add(FileAttributes.Hidden);
-        if ((bool)isSystem.IsChecked!) fileAttributes.Add(FileAttributes.System);
-
-        var newItem = new TreeMenuItem()
-        {
-            Header = itemName,
-            Path = itemPath.AbsolutePath,
-            IsDirectory = (bool)IsDirectory.IsChecked!,
-            Attributes = fileAttributes.ToArray(),
-        };
-
-        _newItem = newItem;
+        _newModel.Caption = nameTextBox.Text;
 
         DialogResult = true;
     }
