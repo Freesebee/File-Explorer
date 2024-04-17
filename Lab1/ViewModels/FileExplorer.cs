@@ -27,7 +27,8 @@ namespace Lab1
 
         public FileExplorer() : base()
         {
-            NotifyPropertyChanged(nameof(Lang));
+            OpenRootFolderCommand = new RelayCommand(OpenRootFolderExecute);
+            //NotifyPropertyChanged(nameof(Lang)); todo test remove
         }
 
         public void OpenRoot(string path)
@@ -264,6 +265,15 @@ namespace Lab1
             };
 
             return (result, currentDir!);
+        }
+
+        private void OpenRootFolderExecute(object parameter)
+        {
+            var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
+
+            if (dlg.ShowDialog() == DialogResult.Cancel) return;
+
+            OpenRoot(dlg.SelectedPath);
         }
     }
 }

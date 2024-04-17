@@ -59,7 +59,9 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{Binding Source={StaticResource Strings}, Path=File}">
-                <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Open_Directory}" Click="MenuItem_Click_Open"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Open_Directory}" 
+                    Command="{Binding OpenRootFolderCommand}"/>
                 <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Exit}" Click="MenuItem_Click_Exit"/>
             </MenuItem>
         </Menu>
