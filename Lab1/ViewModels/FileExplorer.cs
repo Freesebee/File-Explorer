@@ -1,4 +1,5 @@
 ﻿using Lab1.Commands;
+using Lab1.Resources;
 using System.Globalization;
 using System.IO;
 
@@ -22,15 +23,15 @@ namespace Lab1
         }
         
         public RelayCommand OpenRootFolderCommand { get; private set; }
-        
+        public RelayCommand SortRootFolderCommand { get; private set; }
+
         private FileSystemWatcher? _watcher;
-
         private Uri? _rootUri;
-
 
         public FileExplorer() : base()
         {
-            OpenRootFolderCommand = new RelayCommand(OpenRootFolderExecute);
+            OpenRootFolderCommand = new(OpenRootFolderExecute);
+            SortRootFolderCommand = new(SortRootFolderExecute);
         }
 
         public void OpenRoot(string path)
@@ -276,6 +277,11 @@ namespace Lab1
             if (dlg.ShowDialog() == DialogResult.Cancel) return;
 
             OpenRoot(dlg.SelectedPath);
+        }
+
+        private void SortRootFolderExecute(object obj)
+        {
+            throw new NotImplementedException();
         }
     }
 }

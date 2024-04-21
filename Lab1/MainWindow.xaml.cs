@@ -1,4 +1,5 @@
 ﻿using Lab1.Dialogs;
+using Lab1.Resources;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.ComponentModel;
 using System.Globalization;

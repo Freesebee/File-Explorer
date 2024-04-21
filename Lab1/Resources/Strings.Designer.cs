@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Lab1 {
+namespace Lab1.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Lab1 {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lab1.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Lab1.Resources.Strings", typeof(Strings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -120,6 +120,15 @@ namespace Lab1 {
         public static string Select_directory {
             get {
                 return ResourceManager.GetString("Select_directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sort directory.
+        /// </summary>
+        public static string Sort_root {
+            get {
+                return ResourceManager.GetString("Sort_root", resourceCulture);
             }
         }
     }

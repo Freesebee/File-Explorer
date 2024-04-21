@@ -62,6 +62,9 @@
                 <MenuItem 
                     Header="{Binding Source={StaticResource Strings}, Path=Open_Directory}" 
                     Command="{Binding OpenRootFolderCommand}"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Sort_root}"
+                    Command="{Binding SortRootFolderCommand}"/>
                 <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Exit}" Click="MenuItem_Click_Exit"/>
             </MenuItem>
         </Menu>
