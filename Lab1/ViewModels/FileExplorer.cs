@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Lab1.Commands;
+using System.Globalization;
 using System.IO;
 
 namespace Lab1
@@ -6,9 +7,6 @@ namespace Lab1
     public class FileExplorer : ViewModelBase
     {
         public DirectoryInfoViewModel? Root { get; set; }
-
-        private Uri? _rootUri;
-
         public string Lang
         {
             get { return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName; }
@@ -22,18 +20,22 @@ namespace Lab1
                     }
             }
         }
+        
+        public RelayCommand OpenRootFolderCommand { get; private set; }
+        
+        private FileSystemWatcher? _watcher;
 
-        public FileSystemWatcher? Watcher { get; private set; }
+        private Uri? _rootUri;
+
 
         public FileExplorer() : base()
         {
             OpenRootFolderCommand = new RelayCommand(OpenRootFolderExecute);
-            //NotifyPropertyChanged(nameof(Lang)); todo test remove
         }
 
         public void OpenRoot(string path)
         {
-            Watcher = new FileSystemWatcher(path)
+            _watcher = new FileSystemWatcher(path)
             {
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
@@ -44,11 +46,11 @@ namespace Lab1
             Root = new DirectoryInfoViewModel();
             Root.Open(path);
 
-            Watcher.Created += OnFileSystemChanged;
-            Watcher.Renamed += OnFileSystemChanged;
-            Watcher.Deleted += OnFileSystemChanged;
-            Watcher.Changed += OnFileSystemChanged;
-            Watcher.Error += Watcher_Error;
+            _watcher.Created += OnFileSystemChanged;
+            _watcher.Renamed += OnFileSystemChanged;
+            _watcher.Deleted += OnFileSystemChanged;
+            _watcher.Changed += OnFileSystemChanged;
+            _watcher.Error += Watcher_Error;
 
             NotifyPropertyChanged(nameof(Root));
         }

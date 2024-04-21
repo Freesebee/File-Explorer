@@ -18,7 +18,7 @@
                             <MenuItem Click="MenuItem_Click_Read"
                                 Header="{Binding Source={StaticResource Strings}, Path=Read}"/>
                             <MenuItem 
-                                Click="MenuItem_Click_Delete" 
+                                Click="MenuItem_Click_Delete"
                                 Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
                         </ContextMenu>
                     </TextBlock.ContextMenu>
