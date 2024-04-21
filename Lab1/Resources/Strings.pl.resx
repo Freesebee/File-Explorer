@@ -141,4 +141,34 @@
   <data name="Sort_root" xml:space="preserve">
     <value>Posortuj katalog</value>
   </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Zatwierdź</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Anuluj</value>
+  </data>
+  <data name="Alphabetic" xml:space="preserve">
+    <value>Alfabetycznie</value>
+  </data>
+  <data name="Extension" xml:space="preserve">
+    <value>Rozszerzenie</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Rozmiar</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="Ascending" xml:space="preserve">
+    <value>Rosnąco</value>
+  </data>
+  <data name="Descending" xml:space="preserve">
+    <value>Malejąco</value>
+  </data>
+  <data name="Sort_type" xml:space="preserve">
+    <value>Rodzaj sortowania</value>
+  </data>
+  <data name="Sort_order" xml:space="preserve">
+    <value>Kolejność sortowania</value>
+  </data>
 </root>

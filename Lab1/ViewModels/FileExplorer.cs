@@ -1,4 +1,5 @@
 ﻿using Lab1.Commands;
+using Lab1.Dialogs;
 using Lab1.Resources;
 using System.Globalization;
 using System.IO;
@@ -21,7 +22,20 @@ namespace Lab1
                     }
             }
         }
-        
+
+        public SortOptions Sorting
+        {
+            get => Sorting;
+            set
+            {
+                if (value is not null)
+                {
+                    Sorting = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         public RelayCommand OpenRootFolderCommand { get; private set; }
         public RelayCommand SortRootFolderCommand { get; private set; }
 
@@ -174,17 +188,17 @@ namespace Lab1
         {
             var searchItemPath = new Uri(args.FullPath);
 
-            var relativeSegments = searchItemPath.Segments.Where(x => !_rootUri.Segments.Contains(x)).ToList();
+            var relativeSegments = searchItemPath.Segments
+                .Where(x => !_rootUri.Segments.Contains(x))
+                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .ToList();
 
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//[0] is root path but with '/' at the end
             var currentDir = Root;
             while (true)
             {
-                var currentSeg = relativeSegments[currentSegIdx]
-                    .Replace("/", "") //dir have '/' at the end
-                    .Replace("%20", " "); //lazy encoding fix
-
+                var currentSeg = relativeSegments[currentSegIdx];
                 var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg);
 
                 currentDir = item as DirectoryInfoViewModel;
@@ -281,6 +295,12 @@ namespace Lab1
 
         private void SortRootFolderExecute(object obj)
         {
+            var inputDialog = new SortOptionsDialog();
+
+            if (inputDialog.ShowDialog() is null or false) return;
+
+            
+
             throw new NotImplementedException();
         }
     }

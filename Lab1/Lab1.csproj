@@ -27,12 +27,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="DirIcon.jpg" />
-    <Resource Include="EN.jpg">
+    <Resource Include="Resources\Images\DirIcon.jpg" />
+    <Resource Include="Resources\Images\EN.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="FileIcon.jpg" />
-    <Resource Include="PL.jpg" />
+    <Resource Include="Resources\Images\FileIcon.jpg" />
+    <Resource Include="Resources\Images\PL.jpg" />
   </ItemGroup>
 
   <ItemGroup>

@@ -74,14 +74,14 @@
                     x:Name="PolishLangugageButton"
                     Style="{StaticResource LangButtonStyle}"
                     IsChecked="{Binding Lang, Converter={StaticResource LangBoolConverter}, ConverterParameter=pl}">
-                <Image Source="PL.jpg" Width="16" />
+                <Image Source="/Resources/Images/PL.jpg" Width="16" />
             </ToggleButton>
 
             <ToggleButton 
                     x:Name="EnglishLangugageButton"
                     Style="{StaticResource LangButtonStyle}"
                     IsChecked="{Binding Lang, Converter={StaticResource LangBoolConverter}, ConverterParameter=en}">
-                <Image Source="EN.jpg" Width="16" />
+                <Image Source="/Resources/Images/EN.jpg" Width="16" />
             </ToggleButton>
         </ToolBarPanel>
 

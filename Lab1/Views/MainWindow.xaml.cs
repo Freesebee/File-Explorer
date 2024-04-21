@@ -23,7 +23,7 @@ namespace Lab1
             _fileExplorer = new();
 
             DataContext = _fileExplorer;
-            
+
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
         }
 
@@ -132,8 +132,18 @@ namespace Lab1
 
         private void _fileExplorer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FileExplorer.Lang))
-                CultureResources.ChangeCulture(CultureInfo.CurrentUICulture);
+            switch (e.PropertyName)
+            {
+                case nameof(FileExplorer.Lang):
+                    CultureResources.ChangeCulture(CultureInfo.CurrentUICulture);
+                    break;
+
+                case nameof(FileExplorer.Sorting):
+                    _fileExplorer.Sorting = new();
+                    break;
+
+                default: break;
+            }
         }
     }
 }

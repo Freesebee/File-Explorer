@@ -11,7 +11,7 @@ namespace Lab1
 
         public Exception? Exception { get; private set; }
 
-        public override string ImageSource => "DirIcon.jpg";
+        public override string ImageSource => "/Resources/Images/DirIcon.jpg";
 
         public bool Open(string path)
         {

@@ -2,6 +2,6 @@
 {
     public class FileInfoViewModel : FileSystemInfoViewModel
     {
-        public override string ImageSource => "FileIcon.jpg";
+        public override string ImageSource => "/Resources/Images/FileIcon.jpg";
     }
 }
