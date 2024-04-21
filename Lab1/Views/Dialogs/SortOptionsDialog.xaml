@@ -4,12 +4,16 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Lab1.Dialogs"
+        xmlns:conv="clr-namespace:Lab1.Models.Converters"
         mc:Ignorable="d"
         Title="SortOptionsDialog" Height="450" Width="800">
     <Window.Resources>
         <Style x:Key="{x:Type RadioButton}" TargetType="{x:Type RadioButton}">
             <Setter Property="Margin" Value="5" />
         </Style>
+
+        <conv:SortByConverter x:Key="SortByConverter"/>
+        <conv:SortOrderConverter x:Key="SortOrderConverter"/>
     </Window.Resources>
 
     <Grid>
@@ -27,16 +31,28 @@
             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Sort_type}"/>
         </Label>
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
-            <RadioButton Name="SortAlphabeticly" GroupName="SortType" IsChecked="true">
+            <RadioButton 
+                Name="SortAlphabeticly" 
+                GroupName="SortType" 
+                IsChecked="{Binding SortBy, Converter={StaticResource SortByConverter}, ConverterParameter=0}">
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Alphabetic}"/>
             </RadioButton>
-            <RadioButton Name="SortByExtension" GroupName="SortType">
-                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Extension}"/>
-            </RadioButton>
-            <RadioButton Name="SortBySize" GroupName="SortType">
+            <RadioButton 
+                Name="SortBySize" 
+                GroupName="SortType" 
+                IsChecked="{Binding SortBy, Converter={StaticResource SortByConverter}, ConverterParameter=1}">
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Size}"/>
             </RadioButton>
-            <RadioButton Name="SortByDate" GroupName="SortType">
+            <RadioButton 
+                Name="SortByExtension" 
+                GroupName="SortType"
+                IsChecked="{Binding SortBy, Converter={StaticResource SortByConverter}, ConverterParameter=2}">
+                <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Extension}"/>
+            </RadioButton>
+            <RadioButton 
+                Name="SortByDate" 
+                GroupName="SortType"
+                IsChecked="{Binding SortBy, Converter={StaticResource SortByConverter}, ConverterParameter=3}">
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Date}"/>
             </RadioButton>
         </StackPanel>
@@ -45,10 +61,16 @@
             <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Sort_order}"/>
         </Label>
         <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="1">
-            <RadioButton Name="Ascending" GroupName="SortDirection" IsChecked="true">
+            <RadioButton 
+                Name="Ascending" 
+                GroupName="SortDirection" 
+                IsChecked="{Binding Direction, Converter={StaticResource SortOrderConverter}, ConverterParameter=1}">
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Ascending}"/>
             </RadioButton>
-            <RadioButton Name="Descending" GroupName="SortDirection">
+            <RadioButton
+                Name="Descending" 
+                GroupName="SortDirection"
+                IsChecked="{Binding Direction, Converter={StaticResource SortOrderConverter}, ConverterParameter=2}">
                 <TextBlock Text="{Binding Source={StaticResource Strings}, Path=Descending}"/>
             </RadioButton>
         </StackPanel>

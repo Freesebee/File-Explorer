@@ -10,31 +10,39 @@
 
     public class SortOptions : ViewModelBase
     {
-        public SortBy SortType
+        public SortOptions() : base()
         {
-            get => SortType;
+            _sortBy = SortBy.Alphabetic;
+            _direction = SortOrder.Ascending;
+        }
+
+        public SortBy SortBy
+        {
+            get => _sortBy;
             set
             {
-                if (SortType != value)
+                if (_sortBy != value)
                 {
-                    SortType = value;
-                    NotifyPropertyChanged(nameof(SortType));
+                    _sortBy = value;
+                    NotifyPropertyChanged(nameof(SortBy));
                 }
             }
         }
+        private SortBy _sortBy;
 
 
         public SortOrder Direction
         {
-            get => Direction;
+            get => _direction;
             set
             {
-                if (Direction != value)
+                if (_direction != value)
                 {
-                    Direction = value;
+                    _direction = value;
                     NotifyPropertyChanged(nameof(Direction));
                 }
             }
         }
+        private SortOrder _direction;
     }
 }

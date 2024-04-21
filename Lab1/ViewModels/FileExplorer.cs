@@ -39,6 +39,7 @@ namespace Lab1
         public RelayCommand OpenRootFolderCommand { get; private set; }
         public RelayCommand SortRootFolderCommand { get; private set; }
 
+        private SortOptions _sorting;
         private FileSystemWatcher? _watcher;
         private Uri? _rootUri;
 
@@ -295,13 +296,11 @@ namespace Lab1
 
         private void SortRootFolderExecute(object obj)
         {
-            var inputDialog = new SortOptionsDialog();
+            var inputDialog = new SortOptionsDialog(_sorting);
 
             if (inputDialog.ShowDialog() is null or false) return;
 
-            
-
-            throw new NotImplementedException();
+            _sorting = inputDialog.SortOptions;
         }
     }
 }

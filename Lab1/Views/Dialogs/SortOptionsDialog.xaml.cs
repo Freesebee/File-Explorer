@@ -7,31 +7,32 @@ namespace Lab1.Dialogs
     /// </summary>
     public partial class SortOptionsDialog : Window
     {
-        public SortOrder SortOrder { get; private set; }
-        public SortBy SortBy { get; private set; }
+        public SortOptions SortOptions { get; private set; }
 
-        public SortOptionsDialog()
+        public SortOptionsDialog(SortOptions? sortOptions = null)
         {
             InitializeComponent();
+            SortOptions = sortOptions ?? new();
+            DataContext = SortOptions;
         }
 
         private void Button_Click_Confirm(object sender, RoutedEventArgs e)
         {
             if ((bool)SortAlphabeticly.IsChecked!)
-                SortBy = SortBy.Alphabetic;
+                SortOptions.SortBy = SortBy.Alphabetic;
             else if ((bool)SortByDate.IsChecked!)
-                SortBy = SortBy.Date;
+                SortOptions.SortBy = SortBy.Date;
             else if ((bool)SortBySize.IsChecked!)
-                SortBy = SortBy.Size;
+                SortOptions.SortBy = SortBy.Size;
             else if ((bool)SortByExtension.IsChecked!)
-                SortBy = SortBy.Extension;
+                SortOptions.SortBy = SortBy.Extension;
             else
                 throw new NotImplementedException();
 
             if ((bool)Ascending.IsChecked!)
-                SortOrder = SortOrder.Ascending;
+                SortOptions.Direction = SortOrder.Ascending;
             else if ((bool)Descending.IsChecked!)
-                SortOrder = SortOrder.Descending;
+                SortOptions.Direction = SortOrder.Descending;
             else
                 throw new NotImplementedException();
 

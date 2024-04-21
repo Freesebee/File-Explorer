@@ -7,12 +7,12 @@ namespace Lab1.Models.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (SortOrder)value == (SortOrder)parameter;
+            return (SortOrder)value == (SortOrder)int.Parse((string)parameter);
         }
 
         public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (bool)value == true ? (SortOrder)parameter : null;
+            return (bool)value == true ? (SortOrder)int.Parse((string)parameter) : null;
         }
     }
 }
