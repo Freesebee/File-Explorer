@@ -57,5 +57,71 @@ namespace Lab1
 
             return result;
         }
+
+        public void Sort(SortOptions sortOptions)
+        {
+            try
+            {
+                if (sortOptions.Direction is SortOrder.Ascending)
+                    switch (sortOptions.SortBy)
+                    {
+                        case SortBy.Alphabetic:
+                            Items.OrderBy(x => x.Model.Name);
+                            break;
+
+                        case SortBy.Size:
+                            Items.OrderBy(x => x.Model.Name); //todo
+                            break;
+
+                        case SortBy.Extension:
+                            Items.OrderBy(x => x.Model.Extension);
+                            break;
+
+                        case SortBy.Date:
+                            Items.OrderBy(x => x.Model.LastWriteTime);
+                            break;
+
+                        default: throw new NotImplementedException();
+                    }
+                else if(sortOptions.Direction is SortOrder.Descending)
+                {
+                    switch (sortOptions.SortBy)
+                    {
+                        case SortBy.Alphabetic:
+                            Items.OrderByDescending(x => x.Model.Name);
+                            break;
+
+                        case SortBy.Size:
+                            Items.OrderByDescending(x => x.Model.Name); //todo
+                            break;
+
+                        case SortBy.Extension:
+                            Items.OrderByDescending(x => x.Model.Extension);
+                            break;
+
+                        case SortBy.Date:
+                            Items.OrderByDescending(x => x.Model.LastWriteTime);
+                            break;
+
+                        default: throw new NotImplementedException();
+                    }
+                }
+
+                foreach (var itemViewModel in Items)
+                {
+                    if (itemViewModel is DirectoryInfoViewModel)
+                    {
+                        ((DirectoryInfoViewModel)itemViewModel).Sort(sortOptions);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Exception = ex;
+            }
+
+            NotifyPropertyChanged(nameof(Items));
+        }
+
     }
 }

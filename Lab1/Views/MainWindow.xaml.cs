@@ -25,7 +25,10 @@ namespace Lab1
             DataContext = _fileExplorer;
 
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
+
+            _fileExplorer.OpenRoot("C:\\Users\\jakub.aleksiejuk\\Downloads\\Lab1"); //todo remove
         }
+
 
         private void MenuItem_Click_Open(object sender, RoutedEventArgs e)
         {

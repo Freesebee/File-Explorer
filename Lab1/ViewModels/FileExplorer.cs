@@ -301,6 +301,10 @@ namespace Lab1
             if (inputDialog.ShowDialog() is null or false) return;
 
             _sorting = inputDialog.SortOptions;
+
+            Root!.Sort(_sorting);
+
+            NotifyPropertyChanged(nameof(Root));
         }
     }
 }
