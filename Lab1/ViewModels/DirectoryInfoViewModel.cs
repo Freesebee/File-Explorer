@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Windows.Shapes;
 
 namespace Lab1
 {
@@ -8,6 +10,38 @@ namespace Lab1
         public ObservableCollection<FileSystemInfoViewModel> Items { get; private set; }
             = new ObservableCollection<FileSystemInfoViewModel>();
 
+        public uint Count
+        {
+            get { return _count; }
+            set
+            {
+                if (_count != value)
+                {
+                    _count = value;
+
+                    NotifyPropertyChanged(nameof(Count));
+                }
+            }
+        }
+        private uint _count;
+
+        public new FileSystemInfo Model
+        {
+            get => base.Model;
+            set
+            {
+                Size = GetDirectorySize(value);
+                Count = (uint)Directory.GetDirectories(value.FullName).Length;
+                
+                base.Model = value;
+            }
+        }
+        private long GetDirectorySize(FileSystemInfo model)
+        {
+            return new DirectoryInfo(model.FullName)
+                .EnumerateFiles("*", SearchOption.AllDirectories)
+                .Sum(file => file.Length);
+        }
 
         public Exception? Exception { get; private set; }
 
@@ -62,50 +96,53 @@ namespace Lab1
         {
             try
             {
+                IOrderedEnumerable<FileSystemInfoViewModel>? query = null;
                 if (sortOptions.Direction is SortOrder.Ascending)
                     switch (sortOptions.SortBy)
                     {
                         case SortBy.Alphabetic:
-                            Items.OrderBy(x => x.Model.Name);
+                            query = Items.OrderBy(x => x.Name);
                             break;
 
                         case SortBy.Size:
-                            Items.OrderBy(x => x.Model.Name); //todo
+                            query = Items.OrderBy(x => x.Size);
                             break;
 
                         case SortBy.Extension:
-                            Items.OrderBy(x => x.Model.Extension);
+                            query = Items.OrderBy(x => x.Extension);
                             break;
 
                         case SortBy.Date:
-                            Items.OrderBy(x => x.Model.LastWriteTime);
+                            query = Items.OrderBy(x => x.LastWriteTime);
                             break;
 
                         default: throw new NotImplementedException();
                     }
-                else if(sortOptions.Direction is SortOrder.Descending)
+                else if (sortOptions.Direction is SortOrder.Descending)
                 {
                     switch (sortOptions.SortBy)
                     {
                         case SortBy.Alphabetic:
-                            Items.OrderByDescending(x => x.Model.Name);
+                            query = Items.OrderByDescending(x => x.Name);
                             break;
 
                         case SortBy.Size:
-                            Items.OrderByDescending(x => x.Model.Name); //todo
+                            query = Items.OrderByDescending(x => x.Size);
                             break;
 
                         case SortBy.Extension:
-                            Items.OrderByDescending(x => x.Model.Extension);
+                            query = Items.OrderByDescending(x => x.Extension);
                             break;
 
                         case SortBy.Date:
-                            Items.OrderByDescending(x => x.Model.LastWriteTime);
+                            query = Items.OrderByDescending(x => x.LastWriteTime);
                             break;
 
                         default: throw new NotImplementedException();
                     }
                 }
+
+                Items = new ObservableCollection<FileSystemInfoViewModel>(query!);
 
                 foreach (var itemViewModel in Items)
                 {
