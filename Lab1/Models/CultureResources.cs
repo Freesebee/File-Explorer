@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using Lab1.Resources;
+using System.Globalization;
 using System.Windows.Data;
 
 namespace Lab1

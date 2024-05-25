@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using Lab1.Commands;
+using Lab1.Dialogs;
+using Lab1.Resources;
+using System.Globalization;
 using System.IO;
 
 namespace Lab1
@@ -6,9 +9,6 @@ namespace Lab1
     public class FileExplorer : ViewModelBase
     {
         public DirectoryInfoViewModel? Root { get; set; }
-
-        private Uri? _rootUri;
-
         public string Lang
         {
             get { return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName; }
@@ -23,16 +23,39 @@ namespace Lab1
             }
         }
 
-        public FileSystemWatcher? Watcher { get; private set; }
+        public SortOptions Sorting
+        {
+            get => Sorting;
+            set
+            {
+                if (value is not null)
+                {
+                    Sorting = value;
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
+        public RelayCommand OpenRootFolderCommand { get; private set; }
+        public RelayCommand SortRootFolderCommand { get; private set; }
+        public RelayCommand OpenFileCommand { get; private set; }
+
+        private SortOptions _sorting;
+        private FileSystemWatcher? _watcher;
+        private Uri? _rootUri;
+
+        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
 
         public FileExplorer() : base()
         {
-            NotifyPropertyChanged(nameof(Lang));
+            OpenRootFolderCommand = new(OpenRootFolderExecute);
+            SortRootFolderCommand = new(SortRootFolderExecute);
+            OpenFileCommand = new(OpenFileExecute);
         }
 
         public void OpenRoot(string path)
         {
-            Watcher = new FileSystemWatcher(path)
+            _watcher = new FileSystemWatcher(path)
             {
                 IncludeSubdirectories = true,
                 EnableRaisingEvents = true,
@@ -40,16 +63,34 @@ namespace Lab1
 
             _rootUri = new Uri(path);
 
-            Root = new DirectoryInfoViewModel();
+            Root = new DirectoryInfoViewModel(this);
             Root.Open(path);
 
-            Watcher.Created += OnFileSystemChanged;
-            Watcher.Renamed += OnFileSystemChanged;
-            Watcher.Deleted += OnFileSystemChanged;
-            Watcher.Changed += OnFileSystemChanged;
-            Watcher.Error += Watcher_Error;
+            _watcher.Created += OnFileSystemChanged;
+            _watcher.Renamed += OnFileSystemChanged;
+            _watcher.Deleted += OnFileSystemChanged;
+            _watcher.Changed += OnFileSystemChanged;
+            _watcher.Error += Watcher_Error;
 
             NotifyPropertyChanged(nameof(Root));
+        }
+
+        public object GetFileContent(FileInfoViewModel viewModel)
+        {
+            var extension = viewModel.Extension?.ToLower();
+            if (TextFilesExtensions.Contains(extension))
+            {
+                return GetTextFileContent(viewModel);
+            }
+            return null;
+        }
+        
+        private string GetTextFileContent(FileInfoViewModel model)
+        {
+            using (var textReader = File.OpenText(model.Model.FullName))
+            {
+                return textReader.ReadToEnd();
+            }
         }
 
         public static string OpenFile(FileInfoViewModel model)
@@ -73,8 +114,14 @@ namespace Lab1
             else throw new NotImplementedException();
         }
 
-        public static void Create(DirectoryInfoViewModel parentDir, FileSystemInfoViewModel item, IEnumerable<FileAttributes> attributes)
+        public void Create(DirectoryInfoViewModel parentDir, string name, bool isFile, IEnumerable<FileAttributes> attributes)
         {
+            FileSystemInfoViewModel item = isFile
+                ? new FileInfoViewModel(this)
+                : new DirectoryInfoViewModel(this);
+
+            item.Caption = name;
+
             var path = parentDir.Model.FullName + $"\\{item.Caption}";
 
             if (item is DirectoryInfoViewModel)
@@ -170,17 +217,17 @@ namespace Lab1
         {
             var searchItemPath = new Uri(args.FullPath);
 
-            var relativeSegments = searchItemPath.Segments.Where(x => !_rootUri.Segments.Contains(x)).ToList();
+            var relativeSegments = searchItemPath.Segments
+                .Where(x => !_rootUri.Segments.Contains(x))
+                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .ToList();
 
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//[0] is root path but with '/' at the end
             var currentDir = Root;
             while (true)
             {
-                var currentSeg = relativeSegments[currentSegIdx]
-                    .Replace("/", "") //dir have '/' at the end
-                    .Replace("%20", " "); //lazy encoding fix
-
+                var currentSeg = relativeSegments[currentSegIdx];
                 var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg);
 
                 currentDir = item as DirectoryInfoViewModel;
@@ -209,16 +256,16 @@ namespace Lab1
 
             if (isDir)
             {
-                newItem = new DirectoryInfoViewModel();
+                newItem = new DirectoryInfoViewModel(this);
                 ((DirectoryInfoViewModel)newItem).Open(args.FullPath);
             }
             else
             {
-                newItem = new FileInfoViewModel();
+                newItem = new FileInfoViewModel(this);
 
                 var fileInfo = new FileInfo(args.FullPath);
 
-                FileInfoViewModel itemViewModel = new FileInfoViewModel();
+                FileInfoViewModel itemViewModel = new FileInfoViewModel(this);
 
                 newItem.Model = fileInfo;
 
@@ -265,5 +312,46 @@ namespace Lab1
 
             return (result, currentDir!);
         }
+
+        private void OpenRootFolderExecute(object parameter)
+        {
+            var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
+
+            if (dlg.ShowDialog() == DialogResult.Cancel) return;
+
+            OpenRoot(dlg.SelectedPath);
+        }
+
+        private void SortRootFolderExecute(object obj)
+        {
+            var inputDialog = new SortOptionsDialog(_sorting);
+
+            if (inputDialog.ShowDialog() is null or false) return;
+
+            _sorting = inputDialog.SortOptions;
+
+            Root!.Sort(_sorting);
+
+            NotifyPropertyChanged(nameof(Root));
+        }
+
+
+        public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
+
+        private void OpenFileExecute(object obj)
+        {
+            OnOpenFileRequest.Invoke(this, (FileInfoViewModel)obj);
+        }
+
+        private bool OpenFileCanExecute(object parameter)
+        {
+            if (parameter is FileInfoViewModel viewModel)
+            {
+                var extension = viewModel.Extension?.ToLower();
+                return TextFilesExtensions.Contains(extension);
+            }
+            return false;
+        }
+
     }
 }

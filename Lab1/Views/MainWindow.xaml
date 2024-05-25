@@ -9,20 +9,20 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
+        <ContextMenu x:Key="FileContextMenu">
+            <MenuItem x:Name="OpenFileMenuItem"
+                Header="{Binding Source={StaticResource Strings}, Path=Read}"
+                Command="{Binding OpenFileCommand}" 
+                CommandParameter="{Binding}"/>
+            <MenuItem 
+                Click="MenuItem_Click_Delete"
+                Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
+        </ContextMenu>
+
         <DataTemplate DataType="{x:Type local:FileInfoViewModel}">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource FileContextMenu}">
                 <Image Width="16" Source="{Binding ImageSource}"/>
-                <TextBlock Text="{Binding Caption}">
-                    <TextBlock.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Click="MenuItem_Click_Read"
-                                Header="{Binding Source={StaticResource Strings}, Path=Read}"/>
-                            <MenuItem 
-                                Click="MenuItem_Click_Delete" 
-                                Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
-                        </ContextMenu>
-                    </TextBlock.ContextMenu>
-                </TextBlock>
+                <TextBlock Text="{Binding Caption}" />
             </StackPanel>
         </DataTemplate>
 
@@ -59,7 +59,12 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top">
             <MenuItem Header="{Binding Source={StaticResource Strings}, Path=File}">
-                <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Open_Directory}" Click="MenuItem_Click_Open"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Open_Directory}" 
+                    Command="{Binding OpenRootFolderCommand}"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Sort_root}"
+                    Command="{Binding SortRootFolderCommand}"/>
                 <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Exit}" Click="MenuItem_Click_Exit"/>
             </MenuItem>
         </Menu>
@@ -69,14 +74,14 @@
                     x:Name="PolishLangugageButton"
                     Style="{StaticResource LangButtonStyle}"
                     IsChecked="{Binding Lang, Converter={StaticResource LangBoolConverter}, ConverterParameter=pl}">
-                <Image Source="PL.jpg" Width="16" />
+                <Image Source="/Resources/Images/PL.jpg" Width="16" />
             </ToggleButton>
 
             <ToggleButton 
                     x:Name="EnglishLangugageButton"
                     Style="{StaticResource LangButtonStyle}"
                     IsChecked="{Binding Lang, Converter={StaticResource LangBoolConverter}, ConverterParameter=en}">
-                <Image Source="EN.jpg" Width="16" />
+                <Image Source="/Resources/Images/EN.jpg" Width="16" />
             </ToggleButton>
         </ToolBarPanel>
 
@@ -91,7 +96,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="1" Name="itemTextBox" AcceptsReturn="True" />
+            <ScrollViewer Grid.Row="0" Grid.Column="1" Name="ContentViewer"></ScrollViewer>
 
             <TreeView x:Name="DiskTreeView" 
                       ItemsSource="{Binding Root.Items}"

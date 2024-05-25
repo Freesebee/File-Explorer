@@ -1,4 +1,5 @@
 ﻿using Lab1.Dialogs;
+using Lab1.Resources;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.ComponentModel;
 using System.Globalization;
@@ -22,9 +23,13 @@ namespace Lab1
             _fileExplorer = new();
 
             DataContext = _fileExplorer;
-            
+
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
+            _fileExplorer.OnOpenFileRequest += _fileExplorer_OnOpenFileRequest;
+
+            _fileExplorer.OpenRoot("C:\\Users\\jakub.aleksiejuk\\Downloads\\Lab1"); //todo remove
         }
+
 
         private void MenuItem_Click_Open(object sender, RoutedEventArgs e)
         {
@@ -60,7 +65,7 @@ namespace Lab1
             {
                 var fileInfo = (FileInfoViewModel)((MenuItem)e.Source).DataContext;
 
-                itemTextBox.Text = FileExplorer.OpenFile(fileInfo);
+                //itemTextBox.Text = FileExplorer.OpenFile(fileInfo); //todo remove whole methods
             }
             catch (Exception ex)
             {
@@ -95,7 +100,12 @@ namespace Lab1
 
                 if (inputDialog.ShowDialog() is null or false) return;
 
-                FileExplorer.Create(parentDir, inputDialog.NewModel, inputDialog.ModelFileAttributes);
+                _fileExplorer.Create(
+                    parentDir,
+                    inputDialog.Name,
+                    inputDialog.IsFileSelected, 
+                    inputDialog.ModelFileAttributes);
+
             }
             catch (Exception ex)
             {
@@ -131,8 +141,29 @@ namespace Lab1
 
         private void _fileExplorer_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(FileExplorer.Lang))
-                CultureResources.ChangeCulture(CultureInfo.CurrentUICulture);
+            switch (e.PropertyName)
+            {
+                case nameof(FileExplorer.Lang):
+                    CultureResources.ChangeCulture(CultureInfo.CurrentUICulture);
+                    break;
+
+                case nameof(FileExplorer.Sorting):
+                    _fileExplorer.Sorting = new();
+                    break;
+
+                default: break;
+            }
         }
+
+        private void _fileExplorer_OnOpenFileRequest(object sender, FileInfoViewModel viewModel)
+        {
+            var content = _fileExplorer.GetFileContent(viewModel);
+            if (content is string text)
+            {
+                var textView = new TextBlock { Text = text };
+                ContentViewer.Content = textView;
+            }
+        }
+
     }
 }

@@ -27,16 +27,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="DirIcon.jpg" />
-    <Resource Include="EN.jpg">
+    <Resource Include="Resources\Images\DirIcon.jpg" />
+    <Resource Include="Resources\Images\EN.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="FileIcon.jpg" />
-    <Resource Include="PL.jpg" />
+    <Resource Include="Resources\Images\FileIcon.jpg" />
+    <Resource Include="Resources\Images\PL.jpg" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Strings.Designer.cs">
+    <Compile Update="Resources\Strings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Strings.resx</DependentUpon>
@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Strings.resx">
+    <EmbeddedResource Update="Resources\Strings.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>

@@ -14,12 +14,12 @@ public partial class CreateItemFormDialog : Window
     public IEnumerable<FileAttributes> ModelFileAttributes => _modelFileAttributes;
     private List<FileAttributes> _modelFileAttributes = new();
 
-    public FileSystemInfoViewModel NewModel => _newModel;
-    private FileSystemInfoViewModel _newModel;
-
     private readonly FileSystemInfoViewModel _parent;
     public bool RadioButton1IsChecked { get; set; }
     public bool RadioButton2IsChecked { get; set; }
+
+    public bool IsFileSelected {  get; set; }
+    public string Name { get; set; }
 
     public CreateItemFormDialog(FileSystemInfoViewModel parent)
     {
@@ -40,11 +40,9 @@ public partial class CreateItemFormDialog : Window
         if ((bool)isHidden.IsChecked!) _modelFileAttributes.Add(FileAttributes.Hidden);
         if ((bool)isSystem.IsChecked!) _modelFileAttributes.Add(FileAttributes.System);
 
-        _newModel = (bool)IsDirectory.IsChecked!
-            ? new DirectoryInfoViewModel()
-            : new FileInfoViewModel();
+        IsFileSelected = !(bool)IsDirectory.IsChecked!;
 
-        _newModel.Caption = nameTextBox.Text;
+        Name = nameTextBox.Text;
 
         DialogResult = true;
     }

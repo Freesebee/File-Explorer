@@ -118,24 +118,57 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Open_Directory" xml:space="preserve">
-    <value>Otwórz katalog</value>
+    <value>Open directory</value>
   </data>
   <data name="File" xml:space="preserve">
-    <value>Plik</value>
+    <value>File</value>
   </data>
   <data name="Select_directory" xml:space="preserve">
-    <value>Wybierz katalog</value>
+    <value>Select directory</value>
   </data>
   <data name="Read" xml:space="preserve">
-    <value>Otwórz plik</value>
+    <value>Read file</value>
   </data>
   <data name="Delete" xml:space="preserve">
-    <value>Usuń</value>
+    <value>Delete</value>
   </data>
   <data name="Create" xml:space="preserve">
-    <value>Utwórz</value>
+    <value>Create</value>
   </data>
   <data name="Exit" xml:space="preserve">
-    <value>Zakończ</value>
+    <value>Exit</value>
+  </data>
+  <data name="Sort_root" xml:space="preserve">
+    <value>Sort directory</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Alphabetic" xml:space="preserve">
+    <value>Alphabetic</value>
+  </data>
+  <data name="Extension" xml:space="preserve">
+    <value>Extension</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Ascending" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="Descending" xml:space="preserve">
+    <value>Descending</value>
+  </data>
+  <data name="Sort_type" xml:space="preserve">
+    <value>Sort type</value>
+  </data>
+  <data name="Sort_order" xml:space="preserve">
+    <value>Sort order</value>
   </data>
 </root>

@@ -18,7 +18,37 @@ namespace Lab1
                 }
             }
         }
-        private string _caption;
+        private string _caption = string.Empty;
+
+        public string Name
+        {
+            get { return _name; }
+            set
+            {
+                if (_name != value)
+                {
+                    _name = value;
+
+                    NotifyPropertyChanged(nameof(Name));
+                }
+            }
+        }
+        private string _name = string.Empty;
+
+        public string Extension
+        {
+            get { return _extension; }
+            set
+            {
+                if (_extension != value)
+                {
+                    _extension = value;
+
+                    NotifyPropertyChanged(nameof(Extension));
+                }
+            }
+        }
+        private string _extension = string.Empty;
 
         public DateTime LastWriteTime
         {
@@ -35,6 +65,41 @@ namespace Lab1
         }
         private DateTime _lastWriteTime;
 
+        public long Size
+        {
+            get { return _size; }
+            set
+            {
+                if (_size != value)
+                {
+                    _size = value;
+
+                    NotifyPropertyChanged(nameof(Size));
+                }
+            }
+        }
+        private long _size;
+
+        public ViewModelBase Owner { get; private set; }
+
+        public FileExplorer? OwnerExplorer
+        {
+            get
+            {
+                var owner = Owner;
+
+                while (owner is DirectoryInfoViewModel ownerDirectory)
+                {
+                    if (ownerDirectory.Owner is FileExplorer explorer)
+                        return explorer;
+
+                    owner = ownerDirectory.Owner;
+                }
+
+                return null;
+            }
+        }
+
         public virtual string ImageSource { get; } = string.Empty;
 
         public FileSystemInfo Model
@@ -47,6 +112,8 @@ namespace Lab1
                     _fileSystemInfo = value;
                     LastWriteTime = value.LastWriteTime;
                     Caption = value.Name;
+                    Name = value.Name;
+                    Extension = value.Extension;
 
                     NotifyPropertyChanged(nameof(Model));
                 }
@@ -70,5 +137,11 @@ namespace Lab1
                 return text;
             }
         }
+
+        public FileSystemInfoViewModel(ViewModelBase owner)
+        {
+            Owner = owner;
+        }
+
     }
 }
