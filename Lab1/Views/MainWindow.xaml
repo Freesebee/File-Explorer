@@ -9,20 +9,20 @@
         Title="MainWindow" Height="450" Width="800">
 
     <Window.Resources>
+        <ContextMenu x:Key="FileContextMenu">
+            <MenuItem x:Name="OpenFileMenuItem"
+                Header="{Binding Source={StaticResource Strings}, Path=Read}"
+                Command="{Binding OpenFileCommand}" 
+                CommandParameter="{Binding}"/>
+            <MenuItem 
+                Click="MenuItem_Click_Delete"
+                Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
+        </ContextMenu>
+
         <DataTemplate DataType="{x:Type local:FileInfoViewModel}">
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" ContextMenu="{StaticResource FileContextMenu}">
                 <Image Width="16" Source="{Binding ImageSource}"/>
-                <TextBlock Text="{Binding Caption}">
-                    <TextBlock.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Click="MenuItem_Click_Read"
-                                Header="{Binding Source={StaticResource Strings}, Path=Read}"/>
-                            <MenuItem 
-                                Click="MenuItem_Click_Delete"
-                                Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
-                        </ContextMenu>
-                    </TextBlock.ContextMenu>
-                </TextBlock>
+                <TextBlock Text="{Binding Caption}" />
             </StackPanel>
         </DataTemplate>
 
@@ -96,7 +96,7 @@
                 <RowDefinition Height="1*"/>
             </Grid.RowDefinitions>
 
-            <TextBox Grid.Row="0" Grid.Column="1" Name="itemTextBox" AcceptsReturn="True" />
+            <ScrollViewer Grid.Row="0" Grid.Column="1" Name="ContentViewer"></ScrollViewer>
 
             <TreeView x:Name="DiskTreeView" 
                       ItemsSource="{Binding Root.Items}"
