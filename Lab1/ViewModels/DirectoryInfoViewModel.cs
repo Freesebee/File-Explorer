@@ -25,6 +25,10 @@ namespace Lab1
         }
         private uint _count;
 
+        public DirectoryInfoViewModel(ViewModelBase owner) : base(owner)
+        {
+        }
+
         public new FileSystemInfo Model
         {
             get => base.Model;
@@ -61,7 +65,7 @@ namespace Lab1
                 {
                     var dirInfo = new DirectoryInfo(dirName);
 
-                    var itemViewModel = new DirectoryInfoViewModel
+                    var itemViewModel = new DirectoryInfoViewModel(this)
                     {
                         Model = dirInfo,
                     };
@@ -75,7 +79,7 @@ namespace Lab1
                 {
                     var fileInfo = new FileInfo(fileName);
 
-                    FileInfoViewModel itemViewModel = new FileInfoViewModel();
+                    FileInfoViewModel itemViewModel = new FileInfoViewModel(this);
 
                     itemViewModel.Model = fileInfo;
 

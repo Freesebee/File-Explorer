@@ -38,15 +38,19 @@ namespace Lab1
 
         public RelayCommand OpenRootFolderCommand { get; private set; }
         public RelayCommand SortRootFolderCommand { get; private set; }
+        public RelayCommand OpenFileCommand { get; private set; }
 
         private SortOptions _sorting;
         private FileSystemWatcher? _watcher;
         private Uri? _rootUri;
 
+        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
+
         public FileExplorer() : base()
         {
             OpenRootFolderCommand = new(OpenRootFolderExecute);
             SortRootFolderCommand = new(SortRootFolderExecute);
+            OpenFileCommand = new(OpenFileExecute);
         }
 
         public void OpenRoot(string path)
@@ -59,7 +63,7 @@ namespace Lab1
 
             _rootUri = new Uri(path);
 
-            Root = new DirectoryInfoViewModel();
+            Root = new DirectoryInfoViewModel(this);
             Root.Open(path);
 
             _watcher.Created += OnFileSystemChanged;
@@ -69,6 +73,24 @@ namespace Lab1
             _watcher.Error += Watcher_Error;
 
             NotifyPropertyChanged(nameof(Root));
+        }
+
+        public object GetFileContent(FileInfoViewModel viewModel)
+        {
+            var extension = viewModel.Extension?.ToLower();
+            if (TextFilesExtensions.Contains(extension))
+            {
+                return GetTextFileContent(viewModel);
+            }
+            return null;
+        }
+        
+        private string GetTextFileContent(FileInfoViewModel model)
+        {
+            using (var textReader = File.OpenText(model.Model.FullName))
+            {
+                return textReader.ReadToEnd();
+            }
         }
 
         public static string OpenFile(FileInfoViewModel model)
@@ -92,8 +114,14 @@ namespace Lab1
             else throw new NotImplementedException();
         }
 
-        public static void Create(DirectoryInfoViewModel parentDir, FileSystemInfoViewModel item, IEnumerable<FileAttributes> attributes)
+        public void Create(DirectoryInfoViewModel parentDir, string name, bool isFile, IEnumerable<FileAttributes> attributes)
         {
+            FileSystemInfoViewModel item = isFile
+                ? new FileInfoViewModel(this)
+                : new DirectoryInfoViewModel(this);
+
+            item.Caption = name;
+
             var path = parentDir.Model.FullName + $"\\{item.Caption}";
 
             if (item is DirectoryInfoViewModel)
@@ -228,16 +256,16 @@ namespace Lab1
 
             if (isDir)
             {
-                newItem = new DirectoryInfoViewModel();
+                newItem = new DirectoryInfoViewModel(this);
                 ((DirectoryInfoViewModel)newItem).Open(args.FullPath);
             }
             else
             {
-                newItem = new FileInfoViewModel();
+                newItem = new FileInfoViewModel(this);
 
                 var fileInfo = new FileInfo(args.FullPath);
 
-                FileInfoViewModel itemViewModel = new FileInfoViewModel();
+                FileInfoViewModel itemViewModel = new FileInfoViewModel(this);
 
                 newItem.Model = fileInfo;
 
@@ -306,5 +334,24 @@ namespace Lab1
 
             NotifyPropertyChanged(nameof(Root));
         }
+
+
+        public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
+
+        private void OpenFileExecute(object obj)
+        {
+            OnOpenFileRequest.Invoke(this, (FileInfoViewModel)obj);
+        }
+
+        private bool OpenFileCanExecute(object parameter)
+        {
+            if (parameter is FileInfoViewModel viewModel)
+            {
+                var extension = viewModel.Extension?.ToLower();
+                return TextFilesExtensions.Contains(extension);
+            }
+            return false;
+        }
+
     }
 }

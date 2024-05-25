@@ -80,6 +80,26 @@ namespace Lab1
         }
         private long _size;
 
+        public ViewModelBase Owner { get; private set; }
+
+        public FileExplorer? OwnerExplorer
+        {
+            get
+            {
+                var owner = Owner;
+
+                while (owner is DirectoryInfoViewModel ownerDirectory)
+                {
+                    if (ownerDirectory.Owner is FileExplorer explorer)
+                        return explorer;
+
+                    owner = ownerDirectory.Owner;
+                }
+
+                return null;
+            }
+        }
+
         public virtual string ImageSource { get; } = string.Empty;
 
         public FileSystemInfo Model
@@ -117,5 +137,11 @@ namespace Lab1
                 return text;
             }
         }
+
+        public FileSystemInfoViewModel(ViewModelBase owner)
+        {
+            Owner = owner;
+        }
+
     }
 }
