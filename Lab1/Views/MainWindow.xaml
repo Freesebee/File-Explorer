@@ -107,6 +107,9 @@
 
             <StatusBar Grid.Row="1" Grid.ColumnSpan="2">
                 <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
+                </StatusBarItem>
+                <StatusBarItem>
                     <TextBlock Name="FileAttributesRash"></TextBlock>
                 </StatusBarItem>
             </StatusBar>

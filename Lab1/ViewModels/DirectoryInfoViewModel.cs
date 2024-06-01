@@ -1,6 +1,9 @@
 ﻿using Lab1.Models;
+using Lab1.Resources;
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.IO;
 using System.Windows.Shapes;
 
@@ -36,7 +39,7 @@ namespace Lab1
             {
                 Size = GetDirectorySize(value);
                 Count = (uint)Directory.GetDirectories(value.FullName).Length;
-                
+
                 base.Model = value;
             }
         }
@@ -68,6 +71,7 @@ namespace Lab1
                     var itemViewModel = new DirectoryInfoViewModel(this)
                     {
                         Model = dirInfo,
+                        StatusMessage = Strings.Ready,
                     };
 
                     itemViewModel.Open(dirInfo.FullName);
@@ -162,6 +166,39 @@ namespace Lab1
             }
 
             NotifyPropertyChanged(nameof(Items));
+        }
+
+        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged += Item_PropertyChanged;
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged -= Item_PropertyChanged;
+                    }
+                    break;
+            }
+        }
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "StatusMessage" && sender is FileSystemInfoViewModel viewModel)
+            {
+                StatusMessage = viewModel.StatusMessage;
+            }
         }
 
     }

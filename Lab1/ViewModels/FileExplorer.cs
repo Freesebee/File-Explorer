@@ -1,6 +1,7 @@
 ﻿using Lab1.Commands;
 using Lab1.Dialogs;
 using Lab1.Resources;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Text.Encodings.Web;
@@ -41,21 +42,39 @@ namespace Lab1
         public RelayCommand SortRootFolderCommand { get; private set; }
         public RelayCommand OpenFileCommand { get; private set; }
 
+        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
+
+        public string StatusMessage
+        {
+            get { return _statusMessage; }
+            set
+            {
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+
+                    NotifyPropertyChanged(nameof(StatusMessage));
+                }
+            }
+        }
+        private string _statusMessage = Strings.Ready;
+
         private SortOptions _sorting;
         private FileSystemWatcher? _watcher;
         private Uri? _rootUri;
 
-        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
 
         public FileExplorer() : base()
         {
             OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
             SortRootFolderCommand = new(SortRootFolderExecute);
-            OpenFileCommand = new(OpenFileExecute);
+            OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
         }
 
         public void OpenRoot(string path)
         {
+            StatusMessage = Strings.Loading;
+
             _watcher = new FileSystemWatcher(path)
             {
                 IncludeSubdirectories = true,
@@ -72,6 +91,8 @@ namespace Lab1
             _watcher.Deleted += OnFileSystemChanged;
             _watcher.Changed += OnFileSystemChanged;
             _watcher.Error += Watcher_Error;
+
+            StatusMessage = Strings.Ready;
 
             NotifyPropertyChanged(nameof(Root));
         }
@@ -363,5 +384,12 @@ namespace Lab1
             return false;
         }
 
+        private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == nameof(StatusMessage) && sender is FileSystemInfoViewModel viewModel)
+            {
+                StatusMessage = viewModel.StatusMessage;
+            }
+        }
     }
 }
