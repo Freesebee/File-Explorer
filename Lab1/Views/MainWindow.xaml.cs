@@ -26,8 +26,6 @@ namespace Lab1
 
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
             _fileExplorer.OnOpenFileRequest += _fileExplorer_OnOpenFileRequest;
-
-            _fileExplorer.OpenRoot("C:\\Users\\jakub.aleksiejuk\\Downloads\\Lab1"); //todo remove
         }
 
 
