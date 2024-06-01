@@ -3,6 +3,7 @@ using Lab1.Dialogs;
 using Lab1.Resources;
 using System.Globalization;
 using System.IO;
+using System.Text.Encodings.Web;
 
 namespace Lab1
 {
@@ -219,31 +220,35 @@ namespace Lab1
 
             var relativeSegments = searchItemPath.Segments
                 .Where(x => !_rootUri.Segments.Contains(x))
-                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .Select(Uri.UnescapeDataString)
                 .ToList();
 
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//[0] is root path but with '/' at the end
             var currentDir = Root;
-            while (true)
+            
+            if(relativeSegments.Count > 2)
             {
-                var currentSeg = relativeSegments[currentSegIdx];
-                var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg);
-
-                currentDir = item as DirectoryInfoViewModel;
-
-                if (currentSegIdx == relativeSegments.Count - 2) //parent of new file
+                while (true)
                 {
-                    break;
-                }
-                else
-                {
-                    currentSegIdx++;
-                }
+                    var currentSeg = relativeSegments[currentSegIdx];
+                    var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg.Remove(currentSeg.Length - 1));
 
-                if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
-            };
+                    currentDir = item as DirectoryInfoViewModel;
 
+                    if (currentSegIdx == relativeSegments.Count - 2) //parent of new file
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        currentSegIdx++;
+                    }
+
+                    if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
+                };
+            }
+            
             var isDir = File
                 .GetAttributes(args.FullPath)
                 .HasFlag(FileAttributes.Directory);
@@ -283,7 +288,7 @@ namespace Lab1
 
             var relativeSegments = oldPath.Segments
                 .Where(x => !_rootUri!.Segments.Contains(x))
-                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .Select(Uri.UnescapeDataString)
                 .ToList();
 
             var iterations = uint.MinValue;
@@ -295,7 +300,12 @@ namespace Lab1
             while (result is null)
             {
                 var currentSeg = relativeSegments[currentSegIdx];
+
+                if (currentSegIdx < relativeSegments.Count - 1) currentSeg = currentSeg.Remove(currentSeg.Length - 1); //info: removes '/' at the end for directories
+
                 var oldItem = currentDir!.Items.First(x => x.Model.Name == currentSeg);
+
+                if (oldItem is null) throw new ArgumentException("Cannot find matching element");
 
                 if (currentSeg == relativeSegments.Last())
                 {
