@@ -49,7 +49,7 @@ namespace Lab1
 
         public FileExplorer() : base()
         {
-            OpenRootFolderCommand = new(OpenRootFolderExecute);
+            OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
             SortRootFolderCommand = new(SortRootFolderExecute);
             OpenFileCommand = new(OpenFileExecute);
         }
@@ -295,41 +295,41 @@ namespace Lab1
             var currentSegIdx = 1;//coz [0] is root path but with '/' at the end
             var currentDir = Root;
 
-            FileSystemInfoViewModel? result = null;
+            FileSystemInfoViewModel? targetItem = null;
 
-            while (result is null)
+            while (targetItem is null)
             {
                 var currentSeg = relativeSegments[currentSegIdx];
 
                 if (currentSegIdx < relativeSegments.Count - 1) currentSeg = currentSeg.Remove(currentSeg.Length - 1); //info: removes '/' at the end for directories
 
-                var oldItem = currentDir!.Items.First(x => x.Model.Name == currentSeg);
+                var nextItem = currentDir!.Items.First(x => x.Model.Name == currentSeg);
 
-                if (oldItem is null) throw new ArgumentException("Cannot find matching element");
+                if (nextItem is null) throw new ArgumentException("Cannot find matching element");
 
                 if (currentSeg == relativeSegments.Last())
                 {
-                    result = oldItem;
+                    targetItem = nextItem;
                 }
                 else
                 {
-                    currentDir = (DirectoryInfoViewModel)oldItem;
+                    currentDir = (DirectoryInfoViewModel)nextItem;
                     currentSegIdx++;
                 }
 
                 if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
             };
 
-            return (result, currentDir!);
+            return (targetItem, currentDir!);
         }
 
-        private void OpenRootFolderExecute(object parameter)
+        private async void OpenRootFolderExecuteAsync(object parameter)
         {
             var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
 
-            if (dlg.ShowDialog() == DialogResult.Cancel) return;
+            if (dlg.ShowDialog() != DialogResult.OK) return;
 
-            OpenRoot(dlg.SelectedPath);
+            await Task.Factory.StartNew(() => OpenRoot(dlg.SelectedPath));
         }
 
         private void SortRootFolderExecute(object obj)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Lab1.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows.Shapes;
@@ -7,8 +8,7 @@ namespace Lab1
 {
     public class DirectoryInfoViewModel : FileSystemInfoViewModel
     {
-        public ObservableCollection<FileSystemInfoViewModel> Items { get; private set; }
-            = new ObservableCollection<FileSystemInfoViewModel>();
+        public DispatchedObservableCollection<FileSystemInfoViewModel> Items { get; private set; } = new();
 
         public uint Count
         {
@@ -146,7 +146,7 @@ namespace Lab1
                     }
                 }
 
-                Items = new ObservableCollection<FileSystemInfoViewModel>(query!);
+                Items = new DispatchedObservableCollection<FileSystemInfoViewModel>(query!);
 
                 foreach (var itemViewModel in Items)
                 {
