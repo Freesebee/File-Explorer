@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Lab1"
         mc:Ignorable="d"
         xmlns:self="clr-namespace:Lab1"
-        Title="MainWindow" Height="450" Width="800">
+        Title="File Explorer" Height="450" Width="800">
 
     <Window.Resources>
         <ContextMenu x:Key="FileContextMenu">
@@ -34,11 +34,11 @@
                 <TextBlock Text="{Binding Caption}" FontWeight="Bold">
                     <TextBlock.ContextMenu>
                         <ContextMenu>
-                            <MenuItem 
+                            <MenuItem
                                 Click="MenuItem_Click_Delete" 
                                 Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
                             <MenuItem 
-                                Click="MenuItem_Click_Create" 
+                                Click="MenuItem_Click_Create"
                                 Header="{Binding Source={StaticResource Strings}, Path=Create}"/>
                         </ContextMenu>
                     </TextBlock.ContextMenu>
@@ -87,7 +87,7 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
 
@@ -106,6 +106,21 @@
             </TreeView>
 
             <StatusBar Grid.Row="1" Grid.ColumnSpan="2">
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
+                </StatusBarItem>
+                <Button Content="{Binding Source={StaticResource Strings}, Path=Cancel_task}" Command="{Binding CancelTaskCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunningTaskButtonEnabled}" Value="False">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <StatusBarItem>
                     <TextBlock Name="FileAttributesRash"></TextBlock>
                 </StatusBarItem>

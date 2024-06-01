@@ -1,14 +1,33 @@
 ﻿using Lab1.Commands;
 using Lab1.Dialogs;
 using Lab1.Resources;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
+using System.Text.Encodings.Web;
 
 namespace Lab1
 {
     public class FileExplorer : ViewModelBase
     {
         public DirectoryInfoViewModel? Root { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+        private CancellationToken CancellationToken => _cancellationTokenSrc.Token;
+
+        private bool _isRunningTaskButtonEnabled;
+
+        public bool IsRunningTaskButtonEnabled
+        {
+            get { return _isRunningTaskButtonEnabled; }
+            set
+            {
+                _isRunningTaskButtonEnabled = value;
+                NotifyPropertyChanged(nameof(IsRunningTaskButtonEnabled));
+            }
+        }
+
         public string Lang
         {
             get { return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName; }
@@ -18,7 +37,7 @@ namespace Lab1
                     if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != value)
                     {
                         CultureInfo.CurrentUICulture = new CultureInfo(value);
-                        NotifyPropertyChanged();
+                        NotifyPropertyChanged(nameof(Lang));
                     }
             }
         }
@@ -39,22 +58,44 @@ namespace Lab1
         public RelayCommand OpenRootFolderCommand { get; private set; }
         public RelayCommand SortRootFolderCommand { get; private set; }
         public RelayCommand OpenFileCommand { get; private set; }
+        public RelayCommand CancelTaskCommand { get; private set; }
+
+        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
+
+        public string StatusMessage
+        {
+            get { return _statusMessage; }
+            set
+            {
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+
+                    NotifyPropertyChanged(nameof(StatusMessage));
+                }
+            }
+        }
+        private string _statusMessage = Strings.Ready;
 
         private SortOptions _sorting;
         private FileSystemWatcher? _watcher;
         private Uri? _rootUri;
 
-        public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
 
         public FileExplorer() : base()
         {
-            OpenRootFolderCommand = new(OpenRootFolderExecute);
-            SortRootFolderCommand = new(SortRootFolderExecute);
-            OpenFileCommand = new(OpenFileExecute);
+            _isRunningTaskButtonEnabled = false;
+            _cancellationTokenSrc = new CancellationTokenSource();
+            OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
+            SortRootFolderCommand = new(SortRootFolderExecuteAsync);
+            OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
+            CancelTaskCommand = new(CancelTaskExecute);
         }
 
         public void OpenRoot(string path)
         {
+            StatusMessage = $"{Strings.Loading} {path}";
+
             _watcher = new FileSystemWatcher(path)
             {
                 IncludeSubdirectories = true,
@@ -72,6 +113,10 @@ namespace Lab1
             _watcher.Changed += OnFileSystemChanged;
             _watcher.Error += Watcher_Error;
 
+            Root.PropertyChanged += Root_PropertyChanged;
+
+            StatusMessage = Strings.Ready;
+
             NotifyPropertyChanged(nameof(Root));
         }
 
@@ -84,7 +129,7 @@ namespace Lab1
             }
             return null;
         }
-        
+
         private string GetTextFileContent(FileInfoViewModel model)
         {
             using (var textReader = File.OpenText(model.Model.FullName))
@@ -219,30 +264,34 @@ namespace Lab1
 
             var relativeSegments = searchItemPath.Segments
                 .Where(x => !_rootUri.Segments.Contains(x))
-                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .Select(Uri.UnescapeDataString)
                 .ToList();
 
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//[0] is root path but with '/' at the end
             var currentDir = Root;
-            while (true)
+
+            if (relativeSegments.Count > 2)
             {
-                var currentSeg = relativeSegments[currentSegIdx];
-                var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg);
-
-                currentDir = item as DirectoryInfoViewModel;
-
-                if (currentSegIdx == relativeSegments.Count - 2) //parent of new file
+                while (true)
                 {
-                    break;
-                }
-                else
-                {
-                    currentSegIdx++;
-                }
+                    var currentSeg = relativeSegments[currentSegIdx];
+                    var item = currentDir.Items.FirstOrDefault(x => x.Caption == currentSeg.Remove(currentSeg.Length - 1));
 
-                if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
-            };
+                    currentDir = item as DirectoryInfoViewModel;
+
+                    if (currentSegIdx == relativeSegments.Count - 2) //parent of new file
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        currentSegIdx++;
+                    }
+
+                    if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
+                };
+            }
 
             var isDir = File
                 .GetAttributes(args.FullPath)
@@ -283,58 +332,92 @@ namespace Lab1
 
             var relativeSegments = oldPath.Segments
                 .Where(x => !_rootUri!.Segments.Contains(x))
-                .Select(x => x.Replace("/", "").Replace("%20", " "))
+                .Select(Uri.UnescapeDataString)
                 .ToList();
 
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//coz [0] is root path but with '/' at the end
             var currentDir = Root;
 
-            FileSystemInfoViewModel? result = null;
+            FileSystemInfoViewModel? targetItem = null;
 
-            while (result is null)
+            while (targetItem is null)
             {
                 var currentSeg = relativeSegments[currentSegIdx];
-                var oldItem = currentDir!.Items.First(x => x.Model.Name == currentSeg);
+
+                if (currentSegIdx < relativeSegments.Count - 1) currentSeg = currentSeg.Remove(currentSeg.Length - 1); //info: removes '/' at the end for directories
+
+                var nextItem = currentDir!.Items.First(x => x.Model.Name == currentSeg);
+
+                if (nextItem is null) throw new ArgumentException("Cannot find matching element");
 
                 if (currentSeg == relativeSegments.Last())
                 {
-                    result = oldItem;
+                    targetItem = nextItem;
                 }
                 else
                 {
-                    currentDir = (DirectoryInfoViewModel)oldItem;
+                    currentDir = (DirectoryInfoViewModel)nextItem;
                     currentSegIdx++;
                 }
 
                 if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
             };
 
-            return (result, currentDir!);
+            return (targetItem, currentDir!);
         }
 
-        private void OpenRootFolderExecute(object parameter)
+        private async void OpenRootFolderExecuteAsync(object parameter)
         {
             var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
 
-            if (dlg.ShowDialog() == DialogResult.Cancel) return;
+            if (dlg.ShowDialog() != DialogResult.OK) return;
 
-            OpenRoot(dlg.SelectedPath);
+            await Task.Factory.StartNew(() => OpenRoot(dlg.SelectedPath));
         }
 
-        private void SortRootFolderExecute(object obj)
+        private async void SortRootFolderExecuteAsync(object? obj)
         {
+            _cancellationTokenSrc = new();
+
+            StatusMessage = Strings.Sorting_directory;
+
             var inputDialog = new SortOptionsDialog(_sorting);
 
             if (inputDialog.ShowDialog() is null or false) return;
 
             _sorting = inputDialog.SortOptions;
 
-            Root!.Sort(_sorting);
+            IsRunningTaskButtonEnabled = true;
+
+            try
+            {
+                await Task.Factory.StartNew(() => Root!.Sort(_sorting, CancellationToken), CancellationToken);
+                StatusMessage = $"{Strings.Directory_sorted}";
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n");
+                StatusMessage = $"{Strings.Task_cancelled}";
+            }
+            catch (AggregateException)
+            {
+                Debug.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n");
+                StatusMessage = $"{Strings.Task_cancelled}";
+            }
+            finally
+            {
+                IsRunningTaskButtonEnabled = false;
+                _cancellationTokenSrc.Dispose();
+            }
 
             NotifyPropertyChanged(nameof(Root));
         }
 
+        private void CancelTaskExecute(object obj)
+        {
+            _cancellationTokenSrc.Cancel();
+        }
 
         public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
 
@@ -353,5 +436,12 @@ namespace Lab1
             return false;
         }
 
+        private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == nameof(StatusMessage) && sender is FileSystemInfoViewModel viewModel)
+            {
+                StatusMessage = viewModel.StatusMessage;
+            }
+        }
     }
 }

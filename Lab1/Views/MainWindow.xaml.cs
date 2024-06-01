@@ -26,8 +26,6 @@ namespace Lab1
 
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
             _fileExplorer.OnOpenFileRequest += _fileExplorer_OnOpenFileRequest;
-
-            _fileExplorer.OpenRoot("C:\\Users\\jakub.aleksiejuk\\Downloads\\Lab1"); //todo remove
         }
 
 
@@ -37,7 +35,7 @@ namespace Lab1
             {
                 var dlg = new FolderBrowserDialog() { Description = Strings.Select_directory };
 
-                if (dlg.ShowDialog() == System.Windows.Forms.DialogResult.Cancel) return;
+                if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
 
                 _fileExplorer.OpenRoot(dlg.SelectedPath);
             }

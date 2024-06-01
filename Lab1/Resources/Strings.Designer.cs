@@ -88,6 +88,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel task.
+        /// </summary>
+        public static string Cancel_task {
+            get {
+                return ResourceManager.GetString("Cancel_task", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string Confirm {
@@ -133,6 +142,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorted directory.
+        /// </summary>
+        public static string Directory_sorted {
+            get {
+                return ResourceManager.GetString("Directory_sorted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string Exit {
@@ -160,6 +178,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Loading.
+        /// </summary>
+        public static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open directory.
         /// </summary>
         public static string Open_Directory {
@@ -174,6 +201,15 @@ namespace Lab1.Resources {
         public static string Read {
             get {
                 return ResourceManager.GetString("Read", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ready.
+        /// </summary>
+        public static string Ready {
+            get {
+                return ResourceManager.GetString("Ready", resourceCulture);
             }
         }
         
@@ -219,6 +255,24 @@ namespace Lab1.Resources {
         public static string Sort_type {
             get {
                 return ResourceManager.GetString("Sort_type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting directory.
+        /// </summary>
+        public static string Sorting_directory {
+            get {
+                return ResourceManager.GetString("Sorting_directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task cancelled.
+        /// </summary>
+        public static string Task_cancelled {
+            get {
+                return ResourceManager.GetString("Task_cancelled", resourceCulture);
             }
         }
     }

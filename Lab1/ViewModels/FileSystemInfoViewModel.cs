@@ -80,6 +80,21 @@ namespace Lab1
         }
         private long _size;
 
+        public string StatusMessage
+        {
+            get { return _statusMessage; }
+            set
+            {
+                if (_statusMessage != value)
+                {
+                    _statusMessage = value;
+
+                    NotifyPropertyChanged(nameof(StatusMessage));
+                }
+            }
+        }
+        private string _statusMessage;
+
         public ViewModelBase Owner { get; private set; }
 
         public FileExplorer? OwnerExplorer
@@ -142,6 +157,5 @@ namespace Lab1
         {
             Owner = owner;
         }
-
     }
 }

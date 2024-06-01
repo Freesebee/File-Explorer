@@ -1,5 +1,11 @@
-﻿using System;
+﻿using Lab1.Extensions;
+using Lab1.Models;
+using Lab1.Resources;
+using System;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Shapes;
 
@@ -7,8 +13,7 @@ namespace Lab1
 {
     public class DirectoryInfoViewModel : FileSystemInfoViewModel
     {
-        public ObservableCollection<FileSystemInfoViewModel> Items { get; private set; }
-            = new ObservableCollection<FileSystemInfoViewModel>();
+        public DispatchedObservableCollection<FileSystemInfoViewModel> Items { get; private set; }
 
         public uint Count
         {
@@ -27,6 +32,8 @@ namespace Lab1
 
         public DirectoryInfoViewModel(ViewModelBase owner) : base(owner)
         {
+            Items = [];
+            Items.CollectionChanged += Items_CollectionChanged;
         }
 
         public new FileSystemInfo Model
@@ -36,7 +43,7 @@ namespace Lab1
             {
                 Size = GetDirectorySize(value);
                 Count = (uint)Directory.GetDirectories(value.FullName).Length;
-                
+
                 base.Model = value;
             }
         }
@@ -68,6 +75,7 @@ namespace Lab1
                     var itemViewModel = new DirectoryInfoViewModel(this)
                     {
                         Model = dirInfo,
+                        StatusMessage = Strings.Ready,
                     };
 
                     itemViewModel.Open(dirInfo.FullName);
@@ -96,72 +104,49 @@ namespace Lab1
             return result;
         }
 
-        public void Sort(SortOptions sortOptions)
+        public void Sort(SortOptions sortOptions, CancellationToken cancellationToken)
         {
-            try
-            {
-                IOrderedEnumerable<FileSystemInfoViewModel>? query = null;
-                if (sortOptions.Direction is SortOrder.Ascending)
-                    switch (sortOptions.SortBy)
-                    {
-                        case SortBy.Alphabetic:
-                            query = Items.OrderBy(x => x.Name);
-                            break;
+            StatusMessage = $"{Strings.Sorting_directory}: {Caption}";
 
-                        case SortBy.Size:
-                            query = Items.OrderBy(x => x.Size);
-                            break;
-
-                        case SortBy.Extension:
-                            query = Items.OrderBy(x => x.Extension);
-                            break;
-
-                        case SortBy.Date:
-                            query = Items.OrderBy(x => x.LastWriteTime);
-                            break;
-
-                        default: throw new NotImplementedException();
-                    }
-                else if (sortOptions.Direction is SortOrder.Descending)
-                {
-                    switch (sortOptions.SortBy)
-                    {
-                        case SortBy.Alphabetic:
-                            query = Items.OrderByDescending(x => x.Name);
-                            break;
-
-                        case SortBy.Size:
-                            query = Items.OrderByDescending(x => x.Size);
-                            break;
-
-                        case SortBy.Extension:
-                            query = Items.OrderByDescending(x => x.Extension);
-                            break;
-
-                        case SortBy.Date:
-                            query = Items.OrderByDescending(x => x.LastWriteTime);
-                            break;
-
-                        default: throw new NotImplementedException();
-                    }
-                }
-
-                Items = new ObservableCollection<FileSystemInfoViewModel>(query!);
-
-                foreach (var itemViewModel in Items)
-                {
-                    if (itemViewModel is DirectoryInfoViewModel)
-                    {
-                        ((DirectoryInfoViewModel)itemViewModel).Sort(sortOptions);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
+            Items.Sort(sortOptions, cancellationToken);
 
             NotifyPropertyChanged(nameof(Items));
+        }
+
+        private void Items_CollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            switch (args.Action)
+            {
+                case NotifyCollectionChangedAction.Add:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged += Item_PropertyChanged;
+                    }
+                    break;
+
+                case NotifyCollectionChangedAction.Remove:
+                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    {
+                        item.PropertyChanged -= Item_PropertyChanged;
+                    }
+                    break;
+            }
+        }
+
+        private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (sender is DirectoryInfoViewModel senderDir)
+            {
+                StatusMessage = senderDir.StatusMessage;
+            }
+        }
+
+        private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName == "StatusMessage" && sender is FileSystemInfoViewModel viewModel)
+            {
+                StatusMessage = viewModel.StatusMessage;
+            }
         }
 
     }
