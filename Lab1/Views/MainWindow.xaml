@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Lab1"
         mc:Ignorable="d"
         xmlns:self="clr-namespace:Lab1"
-        Title="MainWindow" Height="450" Width="800">
+        Title="File Explorer" Height="450" Width="800">
 
     <Window.Resources>
         <ContextMenu x:Key="FileContextMenu">
@@ -87,7 +87,7 @@
 
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
 

@@ -239,5 +239,14 @@ namespace Lab1.Resources {
                 return ResourceManager.GetString("Sort_type", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting directory.
+        /// </summary>
+        public static string Sorting_directory {
+            get {
+                return ResourceManager.GetString("Sorting_directory", resourceCulture);
+            }
+        }
     }
 }

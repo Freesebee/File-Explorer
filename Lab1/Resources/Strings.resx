@@ -177,4 +177,7 @@
   <data name="Loading" xml:space="preserve">
     <value>Loading</value>
   </data>
+  <data name="Sorting_directory" xml:space="preserve">
+    <value>Sorting directory</value>
+  </data>
 </root>

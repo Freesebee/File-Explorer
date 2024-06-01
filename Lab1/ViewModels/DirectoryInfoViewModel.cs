@@ -1,4 +1,5 @@
-﻿using Lab1.Models;
+﻿using Lab1.Extensions;
+using Lab1.Models;
 using Lab1.Resources;
 using System;
 using System.Collections.ObjectModel;
@@ -104,61 +105,8 @@ namespace Lab1
         {
             try
             {
-                IOrderedEnumerable<FileSystemInfoViewModel>? query = null;
-                if (sortOptions.Direction is SortOrder.Ascending)
-                    switch (sortOptions.SortBy)
-                    {
-                        case SortBy.Alphabetic:
-                            query = Items.OrderBy(x => x.Name);
-                            break;
+                Items.Sort(sortOptions);
 
-                        case SortBy.Size:
-                            query = Items.OrderBy(x => x.Size);
-                            break;
-
-                        case SortBy.Extension:
-                            query = Items.OrderBy(x => x.Extension);
-                            break;
-
-                        case SortBy.Date:
-                            query = Items.OrderBy(x => x.LastWriteTime);
-                            break;
-
-                        default: throw new NotImplementedException();
-                    }
-                else if (sortOptions.Direction is SortOrder.Descending)
-                {
-                    switch (sortOptions.SortBy)
-                    {
-                        case SortBy.Alphabetic:
-                            query = Items.OrderByDescending(x => x.Name);
-                            break;
-
-                        case SortBy.Size:
-                            query = Items.OrderByDescending(x => x.Size);
-                            break;
-
-                        case SortBy.Extension:
-                            query = Items.OrderByDescending(x => x.Extension);
-                            break;
-
-                        case SortBy.Date:
-                            query = Items.OrderByDescending(x => x.LastWriteTime);
-                            break;
-
-                        default: throw new NotImplementedException();
-                    }
-                }
-
-                Items = new DispatchedObservableCollection<FileSystemInfoViewModel>(query!);
-
-                foreach (var itemViewModel in Items)
-                {
-                    if (itemViewModel is DirectoryInfoViewModel)
-                    {
-                        ((DirectoryInfoViewModel)itemViewModel).Sort(sortOptions);
-                    }
-                }
             }
             catch (Exception ex)
             {

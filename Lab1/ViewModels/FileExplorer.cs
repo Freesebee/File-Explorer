@@ -20,7 +20,7 @@ namespace Lab1
                     if (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName != value)
                     {
                         CultureInfo.CurrentUICulture = new CultureInfo(value);
-                        NotifyPropertyChanged();
+                        NotifyPropertyChanged(nameof(Lang));
                     }
             }
         }
@@ -67,13 +67,13 @@ namespace Lab1
         public FileExplorer() : base()
         {
             OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
-            SortRootFolderCommand = new(SortRootFolderExecute);
+            SortRootFolderCommand = new(SortRootFolderExecuteAsync);
             OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
         }
 
         public void OpenRoot(string path)
         {
-            StatusMessage = Strings.Loading;
+            StatusMessage = $"{Strings.Loading} {path}";
 
             _watcher = new FileSystemWatcher(path)
             {
@@ -353,15 +353,19 @@ namespace Lab1
             await Task.Factory.StartNew(() => OpenRoot(dlg.SelectedPath));
         }
 
-        private void SortRootFolderExecute(object obj)
+        private async void SortRootFolderExecuteAsync(object obj)
         {
+            StatusMessage = Strings.Sorting_directory;
+
             var inputDialog = new SortOptionsDialog(_sorting);
 
             if (inputDialog.ShowDialog() is null or false) return;
 
             _sorting = inputDialog.SortOptions;
 
-            Root!.Sort(_sorting);
+            await Task.Factory.StartNew(() => Root!.Sort(_sorting));
+
+            StatusMessage = Strings.Ready;
 
             NotifyPropertyChanged(nameof(Root));
         }

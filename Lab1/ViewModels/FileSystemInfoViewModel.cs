@@ -157,6 +157,5 @@ namespace Lab1
         {
             Owner = owner;
         }
-
     }
 }

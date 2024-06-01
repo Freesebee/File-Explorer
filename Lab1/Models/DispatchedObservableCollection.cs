@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -20,6 +21,22 @@ namespace Lab1.Models
         }
 
         public override event NotifyCollectionChangedEventHandler? CollectionChanged;
+
+        public void Sort(Func<T, string> keySelector, SortOrder order)
+        {
+            var query = order == SortOrder.Ascending 
+                ? this.Items.OrderBy(keySelector) 
+                : this.Items.OrderByDescending(keySelector);
+
+
+            List<T> sorted = this.Items.OrderBy(x => (x as FileSystemInfoViewModel).Size).ToList();
+                //query.ToList() 
+
+            for (int i = 0; i < sorted.Count(); i++)
+            {
+                Move(IndexOf(sorted[i]), i);
+            }
+        }
 
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
@@ -46,5 +63,6 @@ namespace Lab1.Models
                 }
             }
         }
+
     }
 }
