@@ -1,4 +1,5 @@
 ﻿using Lab1.Models;
+using Lab1.Resources;
 using System.Diagnostics;
 
 namespace Lab1.Extensions
@@ -44,9 +45,14 @@ namespace Lab1.Extensions
 
             Action<int> taskAction = (int index) =>
             {
-                Debug.WriteLine($"Storing directory: {sortedDirectories[index].Caption}");
+                Debug.WriteLine($"{Strings.Sorting_directory}: {sortedDirectories[index].Caption}");
                 (sortedDirectories[index] as DirectoryInfoViewModel)?.Sort(options);
+                Debug.WriteLine($"ThreadID: {Thread.CurrentThread.ManagedThreadId}");
             };
+
+            Debug.WriteLine($"MainThreadID: {Thread.CurrentThread.ManagedThreadId}");
+
+            //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego) 
 
             for (int i = 0; i < tasks.Length; i++)
             {
