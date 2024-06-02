@@ -1,14 +1,23 @@
 ﻿using Lab1.Models;
 using Lab1.Resources;
+using System;
 using System.Diagnostics;
 
 namespace Lab1.Extensions
 {
     public static class DispatchedObservableCollectionExtensions
     {
-        public static void Sort(this DispatchedObservableCollection<FileSystemInfoViewModel> collection, SortOptions options)
+        public static void Sort(this DispatchedObservableCollection<FileSystemInfoViewModel> collection, SortOptions options, CancellationToken cancellationToken)
         {
-            Thread.Sleep(1000); //TODO: Usunąć, tylko do prezentacji StatusMessage w Zad.4.4
+            var currentThreadId = Thread.CurrentThread.ManagedThreadId;
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                Debug.WriteLine($"Task in ThreadID: {currentThreadId} was cancelled before it got started.");
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            Thread.Sleep(750); //TODO: Usunąć, tylko do prezentacji StatusMessage w Zad.4.4
 
             var query = options.Direction == SortOrder.Ascending
                 ? options.SortBy switch
@@ -46,7 +55,6 @@ namespace Lab1.Extensions
             var tasks = new Task[subFoldersCount];
 
             var taskOptions = TaskCreationOptions.PreferFairness;
-            var currentThreadId = Thread.CurrentThread.ManagedThreadId;
             //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego), dla TaskCreationOptions.None
             //Zad 4.2 ODP: Tyle nowych wątków, ile jest zadań, dla TaskCreationOptions.LongRunning
             //Zad 4.3 ODP: Dowód w pliku 4.3_dowód.txt, dla TaskCreationOptions.PreferFairness
@@ -54,21 +62,38 @@ namespace Lab1.Extensions
             Action<int> taskAction = (int index) =>
             {
                 var dir = (DirectoryInfoViewModel)sortedDirectories[index];
-                
+
                 Debug.WriteLine(
                     $"ThreadID: {Thread.CurrentThread.ManagedThreadId} is sorting directory: {dir.Caption}");
 
-                dir.Sort(options);
+                dir.Sort(options, cancellationToken);
             };
 
             for (int i = 0; i < tasks.Length; i++)
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Debug.WriteLine($"Task in ThreadID: {currentThreadId} cancelled.");
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
                 int index = i;
                 Debug.WriteLine($"ThreadID: {currentThreadId} planned sorting: {sortedDirectories[index].Caption}");
                 tasks[i] = Task.Factory.StartNew(() => taskAction(index), taskOptions);
             }
 
-            Task.WaitAll(tasks);
+            try
+            {
+                Task.WaitAll(tasks);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (AggregateException)
+            {
+                throw;
+            }
         }
     }
 }

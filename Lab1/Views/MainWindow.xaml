@@ -34,11 +34,11 @@
                 <TextBlock Text="{Binding Caption}" FontWeight="Bold">
                     <TextBlock.ContextMenu>
                         <ContextMenu>
-                            <MenuItem 
+                            <MenuItem
                                 Click="MenuItem_Click_Delete" 
                                 Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
                             <MenuItem 
-                                Click="MenuItem_Click_Create" 
+                                Click="MenuItem_Click_Create"
                                 Header="{Binding Source={StaticResource Strings}, Path=Create}"/>
                         </ContextMenu>
                     </TextBlock.ContextMenu>
@@ -109,6 +109,18 @@
                 <StatusBarItem>
                     <TextBlock Text="{Binding StatusMessage}"></TextBlock>
                 </StatusBarItem>
+                <Button Content="{Binding Source={StaticResource Strings}, Path=Cancel_task}" Command="{Binding CancelTaskCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsRunningTaskButtonEnabled}" Value="False">
+                                    <Setter Property="Visibility" Value="Hidden"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
                 <StatusBarItem>
                     <TextBlock Name="FileAttributesRash"></TextBlock>
                 </StatusBarItem>

@@ -104,18 +104,11 @@ namespace Lab1
             return result;
         }
 
-        public void Sort(SortOptions sortOptions)
+        public void Sort(SortOptions sortOptions, CancellationToken cancellationToken)
         {
             StatusMessage = $"{Strings.Sorting_directory}: {Caption}";
 
-            try
-            {
-                Items.Sort(sortOptions);
-            }
-            catch (Exception ex)
-            {
-                Exception = ex;
-            }
+            Items.Sort(sortOptions, cancellationToken);
 
             NotifyPropertyChanged(nameof(Items));
         }

@@ -183,4 +183,10 @@
   <data name="Directory_sorted" xml:space="preserve">
     <value>Sorted directory</value>
   </data>
+  <data name="Cancel_task" xml:space="preserve">
+    <value>Cancel task</value>
+  </data>
+  <data name="Task_cancelled" xml:space="preserve">
+    <value>Task cancelled</value>
+  </data>
 </root>

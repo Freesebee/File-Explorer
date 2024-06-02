@@ -2,6 +2,7 @@
 using Lab1.Dialogs;
 using Lab1.Resources;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text.Encodings.Web;
@@ -11,6 +12,22 @@ namespace Lab1
     public class FileExplorer : ViewModelBase
     {
         public DirectoryInfoViewModel? Root { get; set; }
+
+        private CancellationTokenSource _cancellationTokenSrc;
+        private CancellationToken CancellationToken => _cancellationTokenSrc.Token;
+
+        private bool _isRunningTaskButtonEnabled;
+
+        public bool IsRunningTaskButtonEnabled
+        {
+            get { return _isRunningTaskButtonEnabled; }
+            set
+            {
+                _isRunningTaskButtonEnabled = value;
+                NotifyPropertyChanged(nameof(IsRunningTaskButtonEnabled));
+            }
+        }
+
         public string Lang
         {
             get { return CultureInfo.CurrentUICulture.TwoLetterISOLanguageName; }
@@ -41,6 +58,7 @@ namespace Lab1
         public RelayCommand OpenRootFolderCommand { get; private set; }
         public RelayCommand SortRootFolderCommand { get; private set; }
         public RelayCommand OpenFileCommand { get; private set; }
+        public RelayCommand CancelTaskCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
 
@@ -66,9 +84,12 @@ namespace Lab1
 
         public FileExplorer() : base()
         {
+            _isRunningTaskButtonEnabled = false;
+            _cancellationTokenSrc = new CancellationTokenSource();
             OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
             SortRootFolderCommand = new(SortRootFolderExecuteAsync);
             OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
+            CancelTaskCommand = new(CancelTaskExecute);
         }
 
         public void OpenRoot(string path)
@@ -108,7 +129,7 @@ namespace Lab1
             }
             return null;
         }
-        
+
         private string GetTextFileContent(FileInfoViewModel model)
         {
             using (var textReader = File.OpenText(model.Model.FullName))
@@ -249,8 +270,8 @@ namespace Lab1
             var iterations = uint.MinValue;
             var currentSegIdx = 1;//[0] is root path but with '/' at the end
             var currentDir = Root;
-            
-            if(relativeSegments.Count > 2)
+
+            if (relativeSegments.Count > 2)
             {
                 while (true)
                 {
@@ -271,7 +292,7 @@ namespace Lab1
                     if (iterations >= uint.MaxValue) throw new OutOfMemoryException();
                 };
             }
-            
+
             var isDir = File
                 .GetAttributes(args.FullPath)
                 .HasFlag(FileAttributes.Directory);
@@ -357,6 +378,8 @@ namespace Lab1
 
         private async void SortRootFolderExecuteAsync(object? obj)
         {
+            _cancellationTokenSrc = new();
+
             StatusMessage = Strings.Sorting_directory;
 
             var inputDialog = new SortOptionsDialog(_sorting);
@@ -365,13 +388,36 @@ namespace Lab1
 
             _sorting = inputDialog.SortOptions;
 
-            await Task.Factory.StartNew(() => Root!.Sort(_sorting));
+            IsRunningTaskButtonEnabled = true;
 
-            StatusMessage = $"{Strings.Directory_sorted}";
+            try
+            {
+                await Task.Factory.StartNew(() => Root!.Sort(_sorting, CancellationToken), CancellationToken);
+                StatusMessage = $"{Strings.Directory_sorted}";
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n");
+                StatusMessage = $"{Strings.Task_cancelled}";
+            }
+            catch (AggregateException)
+            {
+                Debug.WriteLine($"\n{nameof(OperationCanceledException)} thrown\n");
+                StatusMessage = $"{Strings.Task_cancelled}";
+            }
+            finally
+            {
+                IsRunningTaskButtonEnabled = false;
+                _cancellationTokenSrc.Dispose();
+            }
 
             NotifyPropertyChanged(nameof(Root));
         }
 
+        private void CancelTaskExecute(object obj)
+        {
+            _cancellationTokenSrc.Cancel();
+        }
 
         public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
 

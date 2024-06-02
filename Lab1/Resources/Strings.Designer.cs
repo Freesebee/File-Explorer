@@ -88,6 +88,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel task.
+        /// </summary>
+        public static string Cancel_task {
+            get {
+                return ResourceManager.GetString("Cancel_task", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string Confirm {
@@ -255,6 +264,15 @@ namespace Lab1.Resources {
         public static string Sorting_directory {
             get {
                 return ResourceManager.GetString("Sorting_directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Task cancelled.
+        /// </summary>
+        public static string Task_cancelled {
+            get {
+                return ResourceManager.GetString("Task_cancelled", resourceCulture);
             }
         }
     }
