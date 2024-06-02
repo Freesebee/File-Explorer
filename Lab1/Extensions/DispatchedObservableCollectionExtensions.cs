@@ -1,4 +1,5 @@
 ﻿using Lab1.Models;
+using System.Diagnostics;
 
 namespace Lab1.Extensions
 {
@@ -24,22 +25,36 @@ namespace Lab1.Extensions
                     _ => throw new NotImplementedException(),
                 };
 
-            var sortedDirectories = query.Where(x => x is DirectoryInfoViewModel).Select(x => x.Name).ToList();
-            var sortedFiles = query.Where(x => x is FileInfoViewModel).Select(x => x.Name).ToList();
+            var sortedDirectoryQuery = query.Where(x => x is DirectoryInfoViewModel);
+            var sortedFileNames = query.Where(x => x is FileInfoViewModel).Select(x => x.Name).ToList();
 
-            var sortedItemNames = sortedDirectories.Concat(sortedFiles).ToList();
+            var sortedDirectoryNames = sortedDirectoryQuery.Select(x => x.Name).ToList();
+            var sortedItemNames = sortedDirectoryNames.Concat(sortedFileNames).ToList();
 
             for (int i = 0; i < sortedItemNames.Count(); i++)
             {
                 var resultItemIndex = collection.First(x => x.Name == sortedItemNames[i]);
-                //collection.Move(collection.IndexOf(sortedItems[i]), i); //todo remove
                 collection.Move(collection.IndexOf(resultItemIndex), i);
             }
 
-            foreach (var itemViewModel in collection)
+            var sortedDirectories = sortedDirectoryQuery.ToList();
+            int subFoldersCount = sortedDirectories.Count;
+
+            var tasks = new Task[subFoldersCount];
+
+            Action<int> taskAction = (int index) =>
             {
-                (itemViewModel as DirectoryInfoViewModel)?.Sort(options);
+                Debug.WriteLine($"Storing directory: {sortedDirectories[index].Caption}");
+                (sortedDirectories[index] as DirectoryInfoViewModel)?.Sort(options);
+            };
+
+            for (int i = 0; i < tasks.Length; i++)
+            {
+                int index = i;
+                tasks[i] = Task.Factory.StartNew(() => taskAction(index));
             }
+
+            Task.WaitAll(tasks);
         }
     }
 }

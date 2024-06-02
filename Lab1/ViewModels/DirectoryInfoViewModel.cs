@@ -5,6 +5,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Shapes;
 
@@ -106,7 +107,6 @@ namespace Lab1
             try
             {
                 Items.Sort(sortOptions);
-
             }
             catch (Exception ex)
             {

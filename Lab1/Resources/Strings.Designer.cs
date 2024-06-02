@@ -133,6 +133,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sorted directory.
+        /// </summary>
+        public static string Directory_sorted {
+            get {
+                return ResourceManager.GetString("Directory_sorted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Exit.
         /// </summary>
         public static string Exit {

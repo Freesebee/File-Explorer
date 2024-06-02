@@ -180,4 +180,7 @@
   <data name="Sorting_directory" xml:space="preserve">
     <value>Sortowanie katalogu</value>
   </data>
+  <data name="Directory_sorted" xml:space="preserve">
+    <value>Posortowano katalog</value>
+  </data>
 </root>

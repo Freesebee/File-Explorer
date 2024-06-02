@@ -365,7 +365,7 @@ namespace Lab1
 
             await Task.Factory.StartNew(() => Root!.Sort(_sorting));
 
-            StatusMessage = Strings.Ready;
+            StatusMessage = $"{Strings.Directory_sorted}";
 
             NotifyPropertyChanged(nameof(Root));
         }
