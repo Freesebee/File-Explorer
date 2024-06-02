@@ -92,6 +92,8 @@ namespace Lab1
             _watcher.Changed += OnFileSystemChanged;
             _watcher.Error += Watcher_Error;
 
+            Root.PropertyChanged += Root_PropertyChanged;
+
             StatusMessage = Strings.Ready;
 
             NotifyPropertyChanged(nameof(Root));
@@ -353,7 +355,7 @@ namespace Lab1
             await Task.Factory.StartNew(() => OpenRoot(dlg.SelectedPath));
         }
 
-        private async void SortRootFolderExecuteAsync(object obj)
+        private async void SortRootFolderExecuteAsync(object? obj)
         {
             StatusMessage = Strings.Sorting_directory;
 

@@ -1,0 +1,20 @@
+﻿ThreadID: 10 planned sorting: d1
+ThreadID: 10 planned sorting: d2
+ThreadID: 9 is sorting directory: d1
+ThreadID: 7 is sorting directory: d2
+ThreadID: 10 planned sorting: d3
+ThreadID: 9 planned sorting: d1_1
+ThreadID: 5 is sorting directory: d3
+ThreadID: 7 planned sorting: d2_1
+ThreadID: 7 planned sorting: d2_2
+ThreadID: 5 planned sorting: d3_1
+ThreadID: 16 is sorting directory: d1_1
+ThreadID: 16 planned sorting: d1_1_1
+ThreadID: 17 is sorting directory: d2_1
+ThreadID: 17 planned sorting: d2_1_1
+ThreadID: 18 is sorting directory: d2_2
+ThreadID: 18 is sorting directory: d3_1
+ThreadID: 18 is sorting directory: d1_1_1
+ThreadID: 5 is sorting directory: d2_1_1
+ThreadID: 18 planned sorting: d_1_1_1_1
+ThreadID: 5 is sorting directory: d_1_1_1_1

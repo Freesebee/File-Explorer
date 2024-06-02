@@ -8,6 +8,8 @@ namespace Lab1.Extensions
     {
         public static void Sort(this DispatchedObservableCollection<FileSystemInfoViewModel> collection, SortOptions options)
         {
+            Thread.Sleep(1000); //TODO: Usunąć, tylko do prezentacji StatusMessage w Zad.4.4
+
             var query = options.Direction == SortOrder.Ascending
                 ? options.SortBy switch
                 {
@@ -43,20 +45,27 @@ namespace Lab1.Extensions
 
             var tasks = new Task[subFoldersCount];
 
-            Action<int> taskAction = (int index) =>
-            {
-                Debug.WriteLine($"{Strings.Sorting_directory}: {sortedDirectories[index].Caption}");
-                (sortedDirectories[index] as DirectoryInfoViewModel)?.Sort(options);
-            };
-
-            Debug.WriteLine($"ThreadID: {Thread.CurrentThread.ManagedThreadId}");
+            var taskOptions = TaskCreationOptions.PreferFairness;
+            var currentThreadId = Thread.CurrentThread.ManagedThreadId;
             //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego), dla TaskCreationOptions.None
             //Zad 4.2 ODP: Tyle nowych wątków, ile jest zadań, dla TaskCreationOptions.LongRunning
+            //Zad 4.3 ODP: Dowód w pliku 4.3_dowód.txt, dla TaskCreationOptions.PreferFairness
+
+            Action<int> taskAction = (int index) =>
+            {
+                var dir = (DirectoryInfoViewModel)sortedDirectories[index];
+                
+                Debug.WriteLine(
+                    $"ThreadID: {Thread.CurrentThread.ManagedThreadId} is sorting directory: {dir.Caption}");
+
+                dir.Sort(options);
+            };
 
             for (int i = 0; i < tasks.Length; i++)
             {
                 int index = i;
-                tasks[i] = Task.Factory.StartNew(() => taskAction(index), TaskCreationOptions.LongRunning);
+                Debug.WriteLine($"ThreadID: {currentThreadId} planned sorting: {sortedDirectories[index].Caption}");
+                tasks[i] = Task.Factory.StartNew(() => taskAction(index), taskOptions);
             }
 
             Task.WaitAll(tasks);

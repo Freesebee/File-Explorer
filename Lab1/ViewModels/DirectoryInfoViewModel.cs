@@ -13,7 +13,7 @@ namespace Lab1
 {
     public class DirectoryInfoViewModel : FileSystemInfoViewModel
     {
-        public DispatchedObservableCollection<FileSystemInfoViewModel> Items { get; private set; } = new();
+        public DispatchedObservableCollection<FileSystemInfoViewModel> Items { get; private set; }
 
         public uint Count
         {
@@ -32,6 +32,8 @@ namespace Lab1
 
         public DirectoryInfoViewModel(ViewModelBase owner) : base(owner)
         {
+            Items = [];
+            Items.CollectionChanged += Items_CollectionChanged;
         }
 
         public new FileSystemInfo Model
@@ -104,6 +106,8 @@ namespace Lab1
 
         public void Sort(SortOptions sortOptions)
         {
+            StatusMessage = $"{Strings.Sorting_directory}: {Caption}";
+
             try
             {
                 Items.Sort(sortOptions);
@@ -138,7 +142,10 @@ namespace Lab1
 
         private void Item_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            throw new NotImplementedException();
+            if (sender is DirectoryInfoViewModel senderDir)
+            {
+                StatusMessage = senderDir.StatusMessage;
+            }
         }
 
         private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
