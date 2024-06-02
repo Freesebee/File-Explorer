@@ -47,17 +47,16 @@ namespace Lab1.Extensions
             {
                 Debug.WriteLine($"{Strings.Sorting_directory}: {sortedDirectories[index].Caption}");
                 (sortedDirectories[index] as DirectoryInfoViewModel)?.Sort(options);
-                Debug.WriteLine($"ThreadID: {Thread.CurrentThread.ManagedThreadId}");
             };
 
-            Debug.WriteLine($"MainThreadID: {Thread.CurrentThread.ManagedThreadId}");
-
-            //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego) 
+            Debug.WriteLine($"ThreadID: {Thread.CurrentThread.ManagedThreadId}");
+            //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego), dla TaskCreationOptions.None
+            //Zad 4.2 ODP: Tyle nowych wątków, ile jest zadań, dla TaskCreationOptions.LongRunning
 
             for (int i = 0; i < tasks.Length; i++)
             {
                 int index = i;
-                tasks[i] = Task.Factory.StartNew(() => taskAction(index));
+                tasks[i] = Task.Factory.StartNew(() => taskAction(index), TaskCreationOptions.LongRunning);
             }
 
             Task.WaitAll(tasks);
