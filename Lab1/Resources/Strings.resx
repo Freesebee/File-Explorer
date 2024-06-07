@@ -189,4 +189,16 @@
   <data name="Task_cancelled" xml:space="preserve">
     <value>Task cancelled</value>
   </data>
+  <data name="File_moved" xml:space="preserve">
+    <value>File "{0}" moved to "{1}"</value>
+  </data>
+  <data name="File_deleted" xml:space="preserve">
+    <value>File deleted:</value>
+  </data>
+  <data name="File_created" xml:space="preserve">
+    <value>File created: </value>
+  </data>
+  <data name="File_renamed" xml:space="preserve">
+    <value>File "{0}" renamed to "{1}"</value>
+  </data>
 </root>

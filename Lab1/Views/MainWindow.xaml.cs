@@ -1,11 +1,17 @@
-﻿using Lab1.Dialogs;
+﻿using Lab1.BLL;
+using Lab1.Dialogs;
 using Lab1.Resources;
+using Lab1.Views.Dialogs;
 using Microsoft.VisualBasic.ApplicationServices;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Net.Sockets;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.EntityFrameworkCore;
+using Lab1.DAL;
 
 namespace Lab1
 {
@@ -15,10 +21,15 @@ namespace Lab1
     public partial class MainWindow : Window
     {
         private readonly FileExplorer _fileExplorer;
+        private readonly FileManager _fileManager;
+        private readonly AppDbContext _context;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            _context = new AppDbContext();
+            _context.Database.EnsureCreated();
 
             _fileExplorer = new();
 
@@ -26,8 +37,50 @@ namespace Lab1
 
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
             _fileExplorer.OnOpenFileRequest += _fileExplorer_OnOpenFileRequest;
+            _fileExplorer.OnFileChange += _fileExplorer_OnFileChange;
+
+            //_fileManager = InitFileManager(); //todo
         }
 
+        private FileManager InitFileManager()
+        {
+            var fileManager = new FileManager(_context);
+
+            if (!fileManager.IsHostRegistered())
+            {
+                var dialog = new SignInDialog();
+
+                if (dialog.ShowDialog() is null or false)
+                {
+                    return fileManager;
+                }
+
+                fileManager.RegisterUser(new Models.UserRegistraionModel()
+                {
+                    Password = dialog.Password,
+                    Login = dialog.Login,
+                    IPAddress = GetIP().ToString(),
+                    IsHost = true
+                });
+            }
+
+            return fileManager;
+        }
+
+        private IPAddress? GetIP()
+        {
+            IPAddress host = IPAddress.None;
+
+            foreach (IPAddress ip in Dns.GetHostAddresses(Dns.GetHostName()))
+            {
+                host = ip;
+                
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    return host;
+            }
+
+            return null;
+        }
 
         private void MenuItem_Click_Open(object sender, RoutedEventArgs e)
         {
@@ -101,7 +154,7 @@ namespace Lab1
                 _fileExplorer.Create(
                     parentDir,
                     inputDialog.Name,
-                    inputDialog.IsFileSelected, 
+                    inputDialog.IsFileSelected,
                     inputDialog.ModelFileAttributes);
 
             }
@@ -163,5 +216,17 @@ namespace Lab1
             }
         }
 
+        private void _fileExplorer_OnFileChange(object? sender, FileSystemEventArgs e)
+        {
+            //throw new NotImplementedException(); //todo
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+
+            _context.Dispose();
+            
+            base.OnClosing(e);
+        }
     }
 }

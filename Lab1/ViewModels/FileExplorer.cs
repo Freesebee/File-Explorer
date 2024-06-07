@@ -61,6 +61,7 @@ namespace Lab1
         public RelayCommand CancelTaskCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
+        public event EventHandler<FileSystemEventArgs> OnFileChange;
 
         public string StatusMessage
         {
@@ -75,6 +76,8 @@ namespace Lab1
                 }
             }
         }
+
+
         private string _statusMessage = Strings.Ready;
 
         private SortOptions _sorting;
@@ -193,6 +196,7 @@ namespace Lab1
 
         private void OnFileSystemChanged(object sender, FileSystemEventArgs e)
         {
+            OnFileChange.Invoke(this, e);
             System.Windows.Application.Current.Dispatcher.Invoke(() => OnEventFileSystemChanged(e));
         }
 
@@ -230,10 +234,6 @@ namespace Lab1
         {
             var itemWithParent = FindItemAndParent(args);
 
-            //itemWithParent.parent.Items
-            //.RemoveAt(itemWithParent.parent.Items.IndexOf(itemWithParent.item));
-
-            //itemWithParent.item.Caption = args.FullPath; //todo test then remove
             var isDir = File
                 .GetAttributes(args.FullPath)
                 .HasFlag(FileAttributes.Directory);
@@ -242,9 +242,10 @@ namespace Lab1
                 ? new DirectoryInfo(args.FullPath)
                 : new FileInfo(args.FullPath);
 
-            //itemWithParent.parent.Items.Add(itemWithParent.item);
+            var renameArgs = (RenamedEventArgs)args;
 
-            //NotifyPropertyChanged(nameof(itemWithParent.parent.Items)); //todo test 
+            StatusMessage = string.Format(Strings.File_renamed, renameArgs.OldName, renameArgs.Name);
+
             NotifyPropertyChanged(nameof(Root)); //todo test
         }
 
@@ -254,6 +255,8 @@ namespace Lab1
 
             itemWithParent.parent.Items
                 .RemoveAt(itemWithParent.parent.Items.IndexOf(itemWithParent.item));
+
+            StatusMessage = $"{Strings.File_deleted} {args.FullPath}";
 
             NotifyPropertyChanged(nameof(Root));
         }
@@ -321,6 +324,8 @@ namespace Lab1
             }
 
             currentDir.Items.Add(newItem);
+
+            StatusMessage = Strings.File_created +  " " + args.FullPath;
 
             NotifyPropertyChanged(nameof(Root));
         }

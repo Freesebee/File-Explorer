@@ -189,4 +189,16 @@
   <data name="Task_cancelled" xml:space="preserve">
     <value>Zadanie anulowano</value>
   </data>
+  <data name="File_moved" xml:space="preserve">
+    <value>Plik "{0}" przeniesiono do "{1}"</value>
+  </data>
+  <data name="File_deleted" xml:space="preserve">
+    <value>Usunięto plik:</value>
+  </data>
+  <data name="File_created" xml:space="preserve">
+    <value>Utworzono plik:</value>
+  </data>
+  <data name="File_renamed" xml:space="preserve">
+    <value>Zmieniono nazwę pliku "{0}" na "{1}"</value>
+  </data>
 </root>

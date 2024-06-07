@@ -178,6 +178,42 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File created: .
+        /// </summary>
+        public static string File_created {
+            get {
+                return ResourceManager.GetString("File_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File deleted:.
+        /// </summary>
+        public static string File_deleted {
+            get {
+                return ResourceManager.GetString("File_deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File &quot;{0}&quot; moved to &quot;{1}&quot;.
+        /// </summary>
+        public static string File_moved {
+            get {
+                return ResourceManager.GetString("File_moved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File &quot;{0}&quot; renamed to &quot;{1}&quot;.
+        /// </summary>
+        public static string File_renamed {
+            get {
+                return ResourceManager.GetString("File_renamed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading.
         /// </summary>
         public static string Loading {
