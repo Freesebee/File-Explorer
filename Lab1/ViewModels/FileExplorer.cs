@@ -1,6 +1,7 @@
 ﻿using Lab1.Commands;
 using Lab1.Dialogs;
 using Lab1.Resources;
+using Lab1.Views.Dialogs;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
@@ -59,9 +60,13 @@ namespace Lab1
         public RelayCommand SortRootFolderCommand { get; private set; }
         public RelayCommand OpenFileCommand { get; private set; }
         public RelayCommand CancelTaskCommand { get; private set; }
+        public RelayCommand RegisterUserCommand { get; private set; }
+        public RelayCommand ListUserCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
         public event EventHandler<FileSystemEventArgs> OnFileChange;
+        public event EventHandler OnRegisterUser;
+        public event EventHandler OnListUsers;
 
         public string StatusMessage
         {
@@ -77,7 +82,6 @@ namespace Lab1
             }
         }
 
-
         private string _statusMessage = Strings.Ready;
 
         private SortOptions _sorting;
@@ -90,9 +94,11 @@ namespace Lab1
             _isRunningTaskButtonEnabled = false;
             _cancellationTokenSrc = new CancellationTokenSource();
             OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
-            SortRootFolderCommand = new(SortRootFolderExecuteAsync);
+            SortRootFolderCommand = new(SortRootFolderExecuteAsync, SortRootFolderCanExecute);
             OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
             CancelTaskCommand = new(CancelTaskExecute);
+            RegisterUserCommand = new(RegisterUserExecute, RegisterUserCanExecute);
+            ListUserCommand = new(ListUserExecute, ListUserCanExecute);
         }
 
         public void OpenRoot(string path)
@@ -419,6 +425,11 @@ namespace Lab1
             NotifyPropertyChanged(nameof(Root));
         }
 
+        private bool SortRootFolderCanExecute(object? obj) 
+        {
+            return Root != null && Root.Items != null && Root.Items.Count > 0;
+        }
+
         private void CancelTaskExecute(object obj)
         {
             _cancellationTokenSrc.Cancel();
@@ -448,5 +459,31 @@ namespace Lab1
                 StatusMessage = viewModel.StatusMessage;
             }
         }
+
+        private bool IsCurrentUserHost()
+        {
+            return true;
+        }
+
+        private void RegisterUserExecute(object obj)
+        {
+            OnRegisterUser.Invoke(this, null);
+        }
+
+        private bool RegisterUserCanExecute(object parameter)
+        {
+            return IsCurrentUserHost();
+        }
+
+        private void ListUserExecute(object obj)
+        {
+            OnListUsers.Invoke(this, null);
+        }
+
+        private bool ListUserCanExecute(object obj)
+        {
+            return IsCurrentUserHost();
+        }
+
     }
 }

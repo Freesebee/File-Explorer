@@ -13,7 +13,6 @@ namespace Lab1.DAL
         public DbSet<User> Users { get; set; }
         public DbSet<FileMetadata> FileMetadata { get; set; }
         public DbSet<UserFilePermission> UserFilePermissions { get; set; }
-        public DbSet<IPAddress> IPAddresses { get; set; }
         public DbSet<Operation> OperationHistory { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,11 +27,6 @@ namespace Lab1.DAL
                 .HasMany(x => x.UserFilePermissions)
                 .WithOne(x => x.FileMetadata)
                 .HasForeignKey(x => x.FileMetadataId);
-
-            builder.Entity<IPAddress>()
-                .HasOne(x => x.User)
-                .WithMany(x => x.IPAddresses)
-                .HasForeignKey(x => x.UserId);
 
             builder.Entity<UserFilePermission>()
                 .HasOne(x => x.CreatedBy)

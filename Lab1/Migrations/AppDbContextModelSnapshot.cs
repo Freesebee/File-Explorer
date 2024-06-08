@@ -91,29 +91,6 @@ namespace Lab1.Migrations
                     b.ToTable("FileMetadata");
                 });
 
-            modelBuilder.Entity("Lab1.DAL.Entities.IPAddress", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("IPAddresses");
-                });
-
             modelBuilder.Entity("Lab1.DAL.Entities.Operation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -151,6 +128,10 @@ namespace Lab1.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("IPAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -161,7 +142,7 @@ namespace Lab1.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -214,17 +195,6 @@ namespace Lab1.Migrations
                     b.HasIndex("PermittedId");
 
                     b.ToTable("UserFilePermissions");
-                });
-
-            modelBuilder.Entity("Lab1.DAL.Entities.IPAddress", b =>
-                {
-                    b.HasOne("Lab1.DAL.Entities.User", "User")
-                        .WithMany("IPAddresses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Lab1.DAL.Entities.Operation", b =>
@@ -282,11 +252,6 @@ namespace Lab1.Migrations
                     b.Navigation("History");
 
                     b.Navigation("UserFilePermissions");
-                });
-
-            modelBuilder.Entity("Lab1.DAL.Entities.User", b =>
-                {
-                    b.Navigation("IPAddresses");
                 });
 #pragma warning restore 612, 618
         }

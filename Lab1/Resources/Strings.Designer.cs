@@ -79,6 +79,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Is blocked.
+        /// </summary>
+        public static string Blocked {
+            get {
+                return ResourceManager.GetString("Blocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -214,6 +223,24 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New local host &quot;{0}&quot; created.
+        /// </summary>
+        public static string Host_created {
+            get {
+                return ResourceManager.GetString("Host_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP address.
+        /// </summary>
+        public static string IP_address {
+            get {
+                return ResourceManager.GetString("IP_address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading.
         /// </summary>
         public static string Loading {
@@ -223,11 +250,29 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open directory.
         /// </summary>
         public static string Open_Directory {
             get {
                 return ResourceManager.GetString("Open_Directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
             }
         }
         
@@ -246,6 +291,15 @@ namespace Lab1.Resources {
         public static string Ready {
             get {
                 return ResourceManager.GetString("Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register.
+        /// </summary>
+        public static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
             }
         }
         
@@ -309,6 +363,42 @@ namespace Lab1.Resources {
         public static string Task_cancelled {
             get {
                 return ResourceManager.GetString("Task_cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New user &quot;{0}&quot; created.
+        /// </summary>
+        public static string User_created {
+            get {
+                return ResourceManager.GetString("User_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show user list.
+        /// </summary>
+        public static string User_list {
+            get {
+                return ResourceManager.GetString("User_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User &quot;{0}&quot; signed in successfully.
+        /// </summary>
+        public static string User_signed_in {
+            get {
+                return ResourceManager.GetString("User_signed_in", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Users.
+        /// </summary>
+        public static string Users {
+            get {
+                return ResourceManager.GetString("Users", resourceCulture);
             }
         }
     }

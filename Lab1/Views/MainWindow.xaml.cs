@@ -12,6 +12,9 @@ using System.Windows;
 using System.Windows.Controls;
 using Microsoft.EntityFrameworkCore;
 using Lab1.DAL;
+using System.Security;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
+using Lab1.Extensions;
 
 namespace Lab1
 {
@@ -38,48 +41,32 @@ namespace Lab1
             _fileExplorer.PropertyChanged += _fileExplorer_PropertyChanged;
             _fileExplorer.OnOpenFileRequest += _fileExplorer_OnOpenFileRequest;
             _fileExplorer.OnFileChange += _fileExplorer_OnFileChange;
+            _fileExplorer.OnRegisterUser += _fileManager_OnRegisterUser;
+            _fileExplorer.OnListUsers += _fileManager_OnListUsers;
 
-            //_fileManager = InitFileManager(); //todo
+            _fileManager = InitFileManager();
         }
 
         private FileManager InitFileManager()
         {
             var fileManager = new FileManager(_context);
 
-            if (!fileManager.IsHostRegistered())
+            var dialog = new SignInDialog(fileManager);
+            
+            var result = dialog.ShowDialog();
+            
+            if(result is null)
             {
-                var dialog = new SignInDialog();
-
-                if (dialog.ShowDialog() is null or false)
-                {
-                    return fileManager;
-                }
-
-                fileManager.RegisterUser(new Models.UserRegistraionModel()
-                {
-                    Password = dialog.Password,
-                    Login = dialog.Login,
-                    IPAddress = GetIP().ToString(),
-                    IsHost = true
-                });
+                return fileManager;
+            }
+            else if (result is false)
+            {
+                return fileManager;
             }
 
+            _fileExplorer.StatusMessage = dialog.Result.Message;
+            
             return fileManager;
-        }
-
-        private IPAddress? GetIP()
-        {
-            IPAddress host = IPAddress.None;
-
-            foreach (IPAddress ip in Dns.GetHostAddresses(Dns.GetHostName()))
-            {
-                host = ip;
-                
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                    return host;
-            }
-
-            return null;
         }
 
         private void MenuItem_Click_Open(object sender, RoutedEventArgs e)
@@ -156,7 +143,6 @@ namespace Lab1
                     inputDialog.Name,
                     inputDialog.IsFileSelected,
                     inputDialog.ModelFileAttributes);
-
             }
             catch (Exception ex)
             {
@@ -219,6 +205,53 @@ namespace Lab1
         private void _fileExplorer_OnFileChange(object? sender, FileSystemEventArgs e)
         {
             //throw new NotImplementedException(); //todo
+        }
+
+        private void _fileManager_OnRegisterUser(object? sender, EventArgs e)
+        {
+            var dialog = new RegisterUserDialog(_fileManager);
+
+            var result = dialog.ShowDialog();
+
+            if (result is null)
+            {
+                return;
+            }
+            else if (result is false)
+            {
+                return;
+            }
+
+            _fileManager.RegisterUser(new Models.UserRegistraionModel()
+            {
+                IPAddress = dialog.Result.IPAddress,
+                Login = dialog.Result.Login,
+                PasswordHash = PasswordExtensions.MD5Hash(dialog.Result.Password),
+                IsHost = false
+            });
+
+            _fileExplorer.StatusMessage = string.Format(Strings.User_created, dialog.Result.Login);
+        }
+
+        private void _fileManager_OnListUsers(object? sender, EventArgs e)
+        {
+            var users = _context.Users.ToList();
+            
+            var dialog = new UserListDialog(users);
+            
+            var result = dialog.ShowDialog();
+            
+            if (result is null or false) return;
+            
+            foreach(var user in dialog.Result.Users)
+            {
+                var entity = _context.Users.First(x => x.Id == user.Id);
+                entity.Login = user.Login;
+                entity.IPAddress = user.IPAdress;
+                entity.IsActive = !user.IsBlocked;
+            }
+
+            _context.SaveChanges();
         }
 
         protected override void OnClosing(CancelEventArgs e)

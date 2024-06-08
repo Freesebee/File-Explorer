@@ -43,33 +43,14 @@ namespace Lab1.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Login = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsHost = table.Column<bool>(type: "bit", nullable: false)
+                    IsHost = table.Column<bool>(type: "bit", nullable: false),
+                    IPAddress = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IPAddresses",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IPAddresses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_IPAddresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -143,11 +124,6 @@ namespace Lab1.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_IPAddresses_UserId",
-                table: "IPAddresses",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_OperationHistory_FileMetadataId",
                 table: "OperationHistory",
                 column: "FileMetadataId");
@@ -181,9 +157,6 @@ namespace Lab1.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "IPAddresses");
-
             migrationBuilder.DropTable(
                 name: "OperationHistory");
 

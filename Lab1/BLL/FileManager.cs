@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 using System.DirectoryServices.AccountManagement;
 using System.DirectoryServices.ActiveDirectory;
 using System.Net;
+using System.Net.Sockets;
 using System.Security;
 using System.Security.Principal;
-using IPAddress = Lab1.DAL.Entities.IPAddress;
 
 namespace Lab1.BLL;
 
@@ -20,22 +20,20 @@ public class FileManager
         this.context = context;
     }
 
-    public bool IsHostRegistered()
+    public bool IsLocalUser(string login)
     {
-        var current = WindowsIdentity.GetCurrent();
-        return context.Users.Any(x => x.Login == current.Name);
+        return WindowsIdentity.GetCurrent().Name == login;
     }
+
+    public bool LoginExists(string login) => context.Users.Any(x => x.Login == login);
 
     public User RegisterUser(UserRegistraionModel registraionModel)
     {
         var user = new User()
         {
-            IPAddresses = new List<IPAddress>()
-                {
-                    new() { Address = registraionModel.IPAddress }
-                },
+            IPAddress = registraionModel.IPAddress,
             Login = registraionModel.Login,
-            Password = registraionModel.Password,
+            PasswordHash = registraionModel.PasswordHash,
         };
 
         context.Users.Add(user);
@@ -58,32 +56,6 @@ public class FileManager
 
         context.SaveChanges();
     }
-
-    public void AddUserIp(Guid userId, string ipAddress)
-    {
-        var user = context.Users.First(x => x.Id == userId);
-
-        var ipEntity = new IPAddress()
-        {
-            Address = ipAddress,
-        };
-
-        user.IPAddresses.Add(ipEntity);
-
-        context.SaveChanges();
-    }
-
-    public void RemoveUserIp(Guid userId, Guid ipId)
-    {
-            var user = context.Users.First(x => x.Id == userId);
-            var ipEntity = context.IPAddresses.First(x => x.Id == ipId);
-
-            user.IPAddresses.Remove(ipEntity);
-            context.IPAddresses.Remove(ipEntity);
-
-            context.SaveChanges();
-    }
-
 
     /// <summary>
     ///     Validate username and password combination    
@@ -152,5 +124,28 @@ public class FileManager
         }
 
         return result;
+    }
+
+    public static System.Net.IPAddress? GetIP()
+    {
+        var host = System.Net.IPAddress.None;
+
+        foreach (var ip in Dns.GetHostAddresses(Dns.GetHostName()))
+        {
+            host = ip;
+
+            if (ip.AddressFamily == AddressFamily.InterNetwork) return host;
+        }
+
+        return null;
+    }
+
+    public bool SignIn(string login, string passwordHash)
+    {
+        var user = context.Users.FirstOrDefault(x => x.Login == login);
+        
+        if (user is null) return false;
+        
+        return user.PasswordHash == passwordHash;
     }
 }

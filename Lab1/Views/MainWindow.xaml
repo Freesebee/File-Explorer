@@ -67,6 +67,14 @@
                     Command="{Binding SortRootFolderCommand}"/>
                 <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Exit}" Click="MenuItem_Click_Exit"/>
             </MenuItem>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Users}">
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Register}"
+                    Command="{Binding RegisterUserCommand}"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=User_list}"
+                    Command="{Binding ListUserCommand}"/>
+            </MenuItem>
         </Menu>
 
         <ToolBarPanel DockPanel.Dock="Top" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{x:Static SystemColors.ControlLightBrush}">
