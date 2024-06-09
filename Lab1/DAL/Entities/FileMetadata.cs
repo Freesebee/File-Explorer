@@ -4,11 +4,7 @@ namespace Lab1.DAL.Entities;
 
 public class FileMetadata : AuditableEntity
 {
-    public virtual List<Operation> History { get; set; } = new();
     public string? Title { get; set; }
-    
-    public List<UserFilePermission> UserFilePermissions { get; set; } = new();
-
     public string? Subject { get; set; }
     public string? Publisher { get; set; }
     public string? Contributor { get; set; }
@@ -22,4 +18,6 @@ public class FileMetadata : AuditableEntity
     public string? Coverage { get; set; }
     public string? Rights { get; set; }
     public string? Description { get; set; }
+    public List<UserFilePermission> UserFilePermissions { get; set; } = new();
+    public virtual List<Operation> History { get; set; } = new();
 }

@@ -1,12 +1,10 @@
 ﻿using Lab1.Commands;
 using Lab1.Dialogs;
 using Lab1.Resources;
-using Lab1.Views.Dialogs;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Text.Encodings.Web;
 
 namespace Lab1
 {
@@ -63,12 +61,14 @@ namespace Lab1
         public RelayCommand RegisterUserCommand { get; private set; }
         public RelayCommand ListUserCommand { get; private set; }
         public RelayCommand ModifyMetadataCommand { get; private set; }
+        public RelayCommand ModifyPermissionsCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
         public event EventHandler<FileSystemEventArgs> OnFileChange;
         public event EventHandler OnRegisterUser;
         public event EventHandler OnListUsers;
         public event EventHandler<FileInfoViewModel> OnModifyMetadataCommand;
+        public event EventHandler<FileInfoViewModel> OnModifyPermissionsCommand;
 
         public string StatusMessage
         {
@@ -102,6 +102,7 @@ namespace Lab1
             RegisterUserCommand = new(RegisterUserExecute, RegisterUserCanExecute);
             ListUserCommand = new(ListUserExecute, ListUserCanExecute);
             ModifyMetadataCommand = new(ModifyMetadataExecute);
+            ModifyPermissionsCommand = new(ModifyPermissionsExecute);
         }
         public void OpenRoot(string path)
         {
@@ -333,7 +334,7 @@ namespace Lab1
 
             currentDir.Items.Add(newItem);
 
-            StatusMessage = Strings.File_created +  " " + args.FullPath;
+            StatusMessage = Strings.File_created + " " + args.FullPath;
 
             NotifyPropertyChanged(nameof(Root));
         }
@@ -427,7 +428,7 @@ namespace Lab1
             NotifyPropertyChanged(nameof(Root));
         }
 
-        private bool SortRootFolderCanExecute(object? obj) 
+        private bool SortRootFolderCanExecute(object? obj)
         {
             return Root != null && Root.Items != null && Root.Items.Count > 0;
         }
@@ -489,7 +490,12 @@ namespace Lab1
 
         private void ModifyMetadataExecute(object obj)
         {
-            OnModifyMetadataCommand.Invoke(this,(FileInfoViewModel)obj);
+            OnModifyMetadataCommand.Invoke(this, (FileInfoViewModel)obj);
+        }
+
+        private void ModifyPermissionsExecute(object obj)
+        {
+            OnModifyPermissionsCommand.Invoke(this, (FileInfoViewModel)obj);
         }
     }
 }

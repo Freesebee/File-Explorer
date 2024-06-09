@@ -20,6 +20,9 @@
             <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Modify_metadata}"
                 Command="{Binding ModifyMetadataCommand}" 
                 CommandParameter="{Binding}"/>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=ModifyPermissions}"
+                Command="{Binding ModifyPermissionsCommand}" 
+                CommandParameter="{Binding}"/>
         </ContextMenu>
 
         <DataTemplate DataType="{x:Type local:FileInfoViewModel}">
@@ -117,9 +120,6 @@
             </TreeView>
 
             <StatusBar Grid.Row="1" Grid.ColumnSpan="2">
-                <StatusBarItem>
-                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
-                </StatusBarItem>
                 <Button Content="{Binding Source={StaticResource Strings}, Path=Cancel_task}" Command="{Binding CancelTaskCommand}">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -134,6 +134,9 @@
                 </Button>
                 <StatusBarItem>
                     <TextBlock Name="FileAttributesRash"></TextBlock>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
                 </StatusBarItem>
             </StatusBar>
         </Grid>

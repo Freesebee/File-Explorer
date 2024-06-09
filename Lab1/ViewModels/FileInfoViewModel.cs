@@ -11,6 +11,7 @@ namespace Lab1
         {
             OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
             ModifyMetadataCommand = new(ModifyMetadataExecute);
+            ModifyPermissionsCommand = new(ModifyPermissionsExecute);
         }
 
         public override string ImageSource => "/Resources/Images/FileIcon.jpg";
@@ -27,6 +28,7 @@ namespace Lab1
 
         public RelayCommand OpenFileCommand { get; private set; }
         public RelayCommand ModifyMetadataCommand { get; private set; }
+        public RelayCommand ModifyPermissionsCommand { get; private set; }
 
         private bool OpenFileCanExecute(object parameter)
         {
@@ -40,6 +42,11 @@ namespace Lab1
         private void ModifyMetadataExecute(object obj)
         {
             OwnerExplorer.ModifyMetadataCommand.Execute((FileInfoViewModel)obj);
+        }
+
+        private void ModifyPermissionsExecute(object obj)
+        {
+            OwnerExplorer.ModifyPermissionsCommand.Execute((FileInfoViewModel)obj);
         }
     }
 }

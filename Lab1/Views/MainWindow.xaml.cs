@@ -1,20 +1,18 @@
 ﻿using Lab1.BLL;
+using Lab1.DAL;
+using Lab1.DAL.Entities;
 using Lab1.Dialogs;
+using Lab1.Extensions;
+using Lab1.Models;
 using Lab1.Resources;
 using Lab1.Views.Dialogs;
-using Microsoft.VisualBasic.ApplicationServices;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Net.Sockets;
-using System.Net;
+using System.Security.Principal;
 using System.Windows;
 using System.Windows.Controls;
-using Microsoft.EntityFrameworkCore;
-using Lab1.DAL;
-using System.Security;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using Lab1.Extensions;
 
 namespace Lab1
 {
@@ -44,6 +42,7 @@ namespace Lab1
             _fileExplorer.OnRegisterUser += _fileManager_OnRegisterUser;
             _fileExplorer.OnListUsers += _fileManager_OnListUsers;
             _fileExplorer.OnModifyMetadataCommand += _fileManager_OnModifyMetadata;
+            _fileExplorer.OnModifyPermissionsCommand += _fileManager_OnModifyPermissions;
 
             _fileManager = InitFileManager();
         }
@@ -256,9 +255,12 @@ namespace Lab1
             _context.SaveChanges();
         }
 
-        private void _fileManager_OnModifyMetadata(object? sender, FileInfoViewModel e)
+        private void _fileManager_OnModifyMetadata(object? sender, FileInfoViewModel fileModel)
         {
-            var metadata = _context.FileMetadata.ToList();
+            var metadata = _context.FileMetadata
+                .FirstOrDefault(x => x.Source == fileModel.Model.FullName);
+
+            if (metadata == null) metadata = new() { Source = fileModel.Model.FullName };
 
             var dialog = new MetadataDialog(metadata);
 
@@ -266,7 +268,7 @@ namespace Lab1
 
             if (result is null or false) return;
 
-            var entity =_context.FileMetadata.FirstOrDefault(x => x.Id == dialog.Result!.Metadata.Id);
+            var entity = _context.FileMetadata.FirstOrDefault(x => x.Id == dialog.Result!.Metadata.Id);
             if (entity is null)
             {
                 _context.FileMetadata.Add(dialog.Result!.Metadata);
@@ -274,6 +276,109 @@ namespace Lab1
 
             _context.SaveChanges();
         }
+
+        private void _fileManager_OnModifyPermissions(object? sender, FileInfoViewModel fileModel)
+        {
+            var fileMetadata = _context.FileMetadata
+                .Include(x => x.UserFilePermissions)
+                .ThenInclude(x => x.Permitted)
+                .FirstOrDefault(x => x.Source == fileModel.Model.FullName);
+
+            if (fileMetadata == null)
+            {
+                fileMetadata = new() { Source = fileModel.Model.FullName };
+                _context.FileMetadata.Add(fileMetadata);
+                _context.SaveChanges();
+            }
+
+            var permissionViewModels = new List<UserFilePermissionsViewModel>();
+
+            foreach (var permission in fileMetadata.UserFilePermissions)
+            {
+                UserFilePermissionsViewModel model = permissionViewModels.FirstOrDefault(x => x.FileMetadataId == permission.FileMetadataId);
+                if (model is not null)
+                {
+                    if (permission.Permission == FilePermission.Upload) model.CanUpload = true;
+                    if (permission.Permission == FilePermission.Download) model.CanDownload = true;
+                    if (permission.Permission == FilePermission.Notify) model.CanBeNotified = true;
+                }
+                else
+                {
+                    model = new()
+                    {
+                        FileMetadataId = permission.FileMetadataId,
+                        User = permission.Permitted.Login,
+                        UserId = permission.PermittedId,
+                    };
+
+                    if (permission.Permission == FilePermission.Upload) model.CanUpload = true;
+                    if (permission.Permission == FilePermission.Download) model.CanDownload = true;
+                    if (permission.Permission == FilePermission.Notify) model.CanBeNotified = true;
+                    permissionViewModels.Add(model);
+                }
+            }
+
+            var dialog = new UserFilePermissionsDialog(permissionViewModels, fileModel);
+
+            var result = dialog.ShowDialog();
+
+            if (result is null or false) return;
+
+            var localUserName = WindowsIdentity.GetCurrent().Name;
+
+            var currentUser = _context.Users.First(x => x.Login == localUserName);
+
+            fileMetadata.UserFilePermissions.Clear();
+
+            foreach (var item in dialog.Result!.Permissions)
+            {
+                var permissions = new List<UserFilePermission>();
+
+                if (item.CanDownload)
+                {
+                    permissions.Add(new UserFilePermission
+                    {
+                        FileMetadataId = fileMetadata.Id,
+                        PermittedId = _context.Users.First(x => x.Login == item.User).Id,
+                        Permission = FilePermission.Download,
+                        ModifiedById = currentUser.Id,
+                        CreatedById = currentUser.Id,
+                        Created = DateTime.Now,
+                    });
+                }
+
+                if (item.CanUpload)
+                {
+                    permissions.Add(new UserFilePermission
+                    {
+                        FileMetadataId = fileMetadata.Id,
+                        PermittedId = _context.Users.First(x => x.Login == item.User).Id,
+                        Permission = FilePermission.Upload,
+                        ModifiedById = currentUser.Id,
+                        CreatedById = currentUser.Id,
+                        Created = DateTime.Now,
+                    });
+                }
+
+                if (item.CanBeNotified)
+                {
+                    permissions.Add(new UserFilePermission
+                    {
+                        FileMetadataId = fileMetadata.Id,
+                        PermittedId = _context.Users.First(x => x.Login == item.User).Id,
+                        Permission = FilePermission.Notify,
+                        ModifiedById = currentUser.Id,
+                        CreatedById = currentUser.Id,
+                        Created = DateTime.Now,
+                    });
+                }
+
+                _context.UserFilePermissions.AddRange(permissions);
+            }
+
+            _context.SaveChanges();
+        }
+
 
         protected override void OnClosing(CancelEventArgs e)
         {

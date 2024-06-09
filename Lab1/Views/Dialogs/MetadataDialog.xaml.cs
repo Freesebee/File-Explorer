@@ -30,13 +30,18 @@ namespace Lab1.Views.Dialogs
 
         public List<FileMetadata> MetadataSource = new();
 
-        public MetadataDialog(List<FileMetadata> metadata)
+        public MetadataDialog(FileMetadata? metadata = null)
         {
             InitializeComponent();
 
-            if (!metadata.Any()) metadata.Add(new FileMetadata());
-            
-            MetadataSource = metadata;
+            if(metadata is not null)
+            {
+                MetadataSource.Add(metadata);
+            }
+            else
+            {
+                MetadataSource.Add(new FileMetadata());
+            }
             
             metaDataGrid.ItemsSource = MetadataSource;
         }
