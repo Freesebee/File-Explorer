@@ -9,7 +9,8 @@ namespace Lab1
     {
         public FileInfoViewModel(ViewModelBase owner) : base(owner)
         {
-            OpenFileCommand = new(OpenFileExecute);
+            OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
+            ModifyMetadataCommand = new(ModifyMetadataExecute);
         }
 
         public override string ImageSource => "/Resources/Images/FileIcon.jpg";
@@ -25,6 +26,7 @@ namespace Lab1
         }
 
         public RelayCommand OpenFileCommand { get; private set; }
+        public RelayCommand ModifyMetadataCommand { get; private set; }
 
         private bool OpenFileCanExecute(object parameter)
         {
@@ -33,6 +35,11 @@ namespace Lab1
         private void OpenFileExecute(object parameter)  
         {
             OwnerExplorer.OpenFileCommand.Execute(parameter);
+        }
+
+        private void ModifyMetadataExecute(object obj)
+        {
+            OwnerExplorer.ModifyMetadataCommand.Execute((FileInfoViewModel)obj);
         }
     }
 }

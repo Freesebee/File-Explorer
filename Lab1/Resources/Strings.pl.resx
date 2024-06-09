@@ -231,4 +231,7 @@
   <data name="Blocked" xml:space="preserve">
     <value>Zablokowany</value>
   </data>
+  <data name="Modify_metadata" xml:space="preserve">
+    <value>Modyfikuj metadane</value>
+  </data>
 </root>

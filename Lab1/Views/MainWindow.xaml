@@ -17,6 +17,9 @@
             <MenuItem 
                 Click="MenuItem_Click_Delete"
                 Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Modify_metadata}"
+                Command="{Binding ModifyMetadataCommand}" 
+                CommandParameter="{Binding}"/>
         </ContextMenu>
 
         <DataTemplate DataType="{x:Type local:FileInfoViewModel}">

@@ -259,6 +259,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modify metadata.
+        /// </summary>
+        public static string Modify_metadata {
+            get {
+                return ResourceManager.GetString("Modify_metadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open directory.
         /// </summary>
         public static string Open_Directory {

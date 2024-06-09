@@ -43,19 +43,21 @@ namespace Lab1
             _fileExplorer.OnFileChange += _fileExplorer_OnFileChange;
             _fileExplorer.OnRegisterUser += _fileManager_OnRegisterUser;
             _fileExplorer.OnListUsers += _fileManager_OnListUsers;
+            _fileExplorer.OnModifyMetadataCommand += _fileManager_OnModifyMetadata;
 
             _fileManager = InitFileManager();
         }
+
 
         private FileManager InitFileManager()
         {
             var fileManager = new FileManager(_context);
 
             var dialog = new SignInDialog(fileManager);
-            
+
             var result = dialog.ShowDialog();
-            
-            if(result is null)
+
+            if (result is null)
             {
                 return fileManager;
             }
@@ -65,7 +67,7 @@ namespace Lab1
             }
 
             _fileExplorer.StatusMessage = dialog.Result.Message;
-            
+
             return fileManager;
         }
 
@@ -236,14 +238,14 @@ namespace Lab1
         private void _fileManager_OnListUsers(object? sender, EventArgs e)
         {
             var users = _context.Users.ToList();
-            
+
             var dialog = new UserListDialog(users);
-            
+
             var result = dialog.ShowDialog();
-            
+
             if (result is null or false) return;
-            
-            foreach(var user in dialog.Result.Users)
+
+            foreach (var user in dialog.Result.Users)
             {
                 var entity = _context.Users.First(x => x.Id == user.Id);
                 entity.Login = user.Login;
@@ -254,11 +256,30 @@ namespace Lab1
             _context.SaveChanges();
         }
 
+        private void _fileManager_OnModifyMetadata(object? sender, FileInfoViewModel e)
+        {
+            var metadata = _context.FileMetadata.ToList();
+
+            var dialog = new MetadataDialog(metadata);
+
+            var result = dialog.ShowDialog();
+
+            if (result is null or false) return;
+
+            var entity =_context.FileMetadata.FirstOrDefault(x => x.Id == dialog.Result!.Metadata.Id);
+            if (entity is null)
+            {
+                _context.FileMetadata.Add(dialog.Result!.Metadata);
+            }
+
+            _context.SaveChanges();
+        }
+
         protected override void OnClosing(CancelEventArgs e)
         {
 
             _context.Dispose();
-            
+
             base.OnClosing(e);
         }
     }

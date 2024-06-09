@@ -62,11 +62,13 @@ namespace Lab1
         public RelayCommand CancelTaskCommand { get; private set; }
         public RelayCommand RegisterUserCommand { get; private set; }
         public RelayCommand ListUserCommand { get; private set; }
+        public RelayCommand ModifyMetadataCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
         public event EventHandler<FileSystemEventArgs> OnFileChange;
         public event EventHandler OnRegisterUser;
         public event EventHandler OnListUsers;
+        public event EventHandler<FileInfoViewModel> OnModifyMetadataCommand;
 
         public string StatusMessage
         {
@@ -99,8 +101,8 @@ namespace Lab1
             CancelTaskCommand = new(CancelTaskExecute);
             RegisterUserCommand = new(RegisterUserExecute, RegisterUserCanExecute);
             ListUserCommand = new(ListUserExecute, ListUserCanExecute);
+            ModifyMetadataCommand = new(ModifyMetadataExecute);
         }
-
         public void OpenRoot(string path)
         {
             StatusMessage = $"{Strings.Loading} {path}";
@@ -435,7 +437,7 @@ namespace Lab1
             _cancellationTokenSrc.Cancel();
         }
 
-        public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
+        public static readonly string[] TextFilesExtensions = [".txt", ".ini", ".log"];
 
         private void OpenFileExecute(object obj)
         {
@@ -485,5 +487,9 @@ namespace Lab1
             return IsCurrentUserHost();
         }
 
+        private void ModifyMetadataExecute(object obj)
+        {
+            OnModifyMetadataCommand.Invoke(this,(FileInfoViewModel)obj);
+        }
     }
 }
