@@ -1,13 +1,9 @@
 ﻿using Lab1.Extensions;
 using Lab1.Models;
 using Lab1.Resources;
-using System;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Windows.Shapes;
 
 namespace Lab1
 {
@@ -47,6 +43,7 @@ namespace Lab1
                 base.Model = value;
             }
         }
+
         private long GetDirectorySize(FileSystemInfo model)
         {
             return new DirectoryInfo(model.FullName)
@@ -118,16 +115,22 @@ namespace Lab1
             switch (args.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    if (args.NewItems is not null)
                     {
-                        item.PropertyChanged += Item_PropertyChanged;
+                        foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                        {
+                            item.PropertyChanged += Item_PropertyChanged;
+                        }
                     }
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                    if (args.NewItems is not null)
                     {
-                        item.PropertyChanged -= Item_PropertyChanged;
+                        foreach (var item in args.NewItems.Cast<FileSystemInfoViewModel>())
+                        {
+                            item.PropertyChanged -= Item_PropertyChanged;
+                        }
                     }
                     break;
             }
@@ -143,11 +146,10 @@ namespace Lab1
 
         private void Root_PropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            if (args.PropertyName == "StatusMessage" && sender is FileSystemInfoViewModel viewModel)
+            if (args.PropertyName == nameof(StatusMessage) && sender is FileSystemInfoViewModel viewModel)
             {
                 StatusMessage = viewModel.StatusMessage;
             }
         }
-
     }
 }

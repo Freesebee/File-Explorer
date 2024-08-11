@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Text.Encodings.Web;
 
 namespace Lab1
 {
@@ -59,8 +58,17 @@ namespace Lab1
         public RelayCommand SortRootFolderCommand { get; private set; }
         public RelayCommand OpenFileCommand { get; private set; }
         public RelayCommand CancelTaskCommand { get; private set; }
+        public RelayCommand RegisterUserCommand { get; private set; }
+        public RelayCommand ListUserCommand { get; private set; }
+        public RelayCommand ModifyMetadataCommand { get; private set; }
+        public RelayCommand ModifyPermissionsCommand { get; private set; }
 
         public event EventHandler<FileInfoViewModel> OnOpenFileRequest;
+        public event EventHandler<FileSystemEventArgs> OnFileChange;
+        public event EventHandler OnRegisterUser;
+        public event EventHandler OnListUsers;
+        public event EventHandler<FileInfoViewModel> OnModifyMetadataCommand;
+        public event EventHandler<FileInfoViewModel> OnModifyPermissionsCommand;
 
         public string StatusMessage
         {
@@ -75,6 +83,7 @@ namespace Lab1
                 }
             }
         }
+
         private string _statusMessage = Strings.Ready;
 
         private SortOptions _sorting;
@@ -87,11 +96,14 @@ namespace Lab1
             _isRunningTaskButtonEnabled = false;
             _cancellationTokenSrc = new CancellationTokenSource();
             OpenRootFolderCommand = new(OpenRootFolderExecuteAsync);
-            SortRootFolderCommand = new(SortRootFolderExecuteAsync);
+            SortRootFolderCommand = new(SortRootFolderExecuteAsync, SortRootFolderCanExecute);
             OpenFileCommand = new(OpenFileExecute, OpenFileCanExecute);
             CancelTaskCommand = new(CancelTaskExecute);
+            RegisterUserCommand = new(RegisterUserExecute, RegisterUserCanExecute);
+            ListUserCommand = new(ListUserExecute, ListUserCanExecute);
+            ModifyMetadataCommand = new(ModifyMetadataExecute);
+            ModifyPermissionsCommand = new(ModifyPermissionsExecute);
         }
-
         public void OpenRoot(string path)
         {
             StatusMessage = $"{Strings.Loading} {path}";
@@ -193,6 +205,7 @@ namespace Lab1
 
         private void OnFileSystemChanged(object sender, FileSystemEventArgs e)
         {
+            OnFileChange.Invoke(this, e);
             System.Windows.Application.Current.Dispatcher.Invoke(() => OnEventFileSystemChanged(e));
         }
 
@@ -230,10 +243,6 @@ namespace Lab1
         {
             var itemWithParent = FindItemAndParent(args);
 
-            //itemWithParent.parent.Items
-            //.RemoveAt(itemWithParent.parent.Items.IndexOf(itemWithParent.item));
-
-            //itemWithParent.item.Caption = args.FullPath; //todo test then remove
             var isDir = File
                 .GetAttributes(args.FullPath)
                 .HasFlag(FileAttributes.Directory);
@@ -242,9 +251,10 @@ namespace Lab1
                 ? new DirectoryInfo(args.FullPath)
                 : new FileInfo(args.FullPath);
 
-            //itemWithParent.parent.Items.Add(itemWithParent.item);
+            var renameArgs = (RenamedEventArgs)args;
 
-            //NotifyPropertyChanged(nameof(itemWithParent.parent.Items)); //todo test 
+            StatusMessage = string.Format(Strings.File_renamed, renameArgs.OldName, renameArgs.Name);
+
             NotifyPropertyChanged(nameof(Root)); //todo test
         }
 
@@ -254,6 +264,8 @@ namespace Lab1
 
             itemWithParent.parent.Items
                 .RemoveAt(itemWithParent.parent.Items.IndexOf(itemWithParent.item));
+
+            StatusMessage = $"{Strings.File_deleted} {args.FullPath}";
 
             NotifyPropertyChanged(nameof(Root));
         }
@@ -321,6 +333,8 @@ namespace Lab1
             }
 
             currentDir.Items.Add(newItem);
+
+            StatusMessage = Strings.File_created + " " + args.FullPath;
 
             NotifyPropertyChanged(nameof(Root));
         }
@@ -414,12 +428,17 @@ namespace Lab1
             NotifyPropertyChanged(nameof(Root));
         }
 
+        private bool SortRootFolderCanExecute(object? obj)
+        {
+            return Root != null && Root.Items != null && Root.Items.Count > 0;
+        }
+
         private void CancelTaskExecute(object obj)
         {
             _cancellationTokenSrc.Cancel();
         }
 
-        public static readonly string[] TextFilesExtensions = new string[] { ".txt", ".ini", ".log" };
+        public static readonly string[] TextFilesExtensions = [".txt", ".ini", ".log"];
 
         private void OpenFileExecute(object obj)
         {
@@ -442,6 +461,41 @@ namespace Lab1
             {
                 StatusMessage = viewModel.StatusMessage;
             }
+        }
+
+        private bool IsCurrentUserHost()
+        {
+            return true;
+        }
+
+        private void RegisterUserExecute(object obj)
+        {
+            OnRegisterUser.Invoke(this, null);
+        }
+
+        private bool RegisterUserCanExecute(object parameter)
+        {
+            return IsCurrentUserHost();
+        }
+
+        private void ListUserExecute(object obj)
+        {
+            OnListUsers.Invoke(this, null);
+        }
+
+        private bool ListUserCanExecute(object obj)
+        {
+            return IsCurrentUserHost();
+        }
+
+        private void ModifyMetadataExecute(object obj)
+        {
+            OnModifyMetadataCommand.Invoke(this, (FileInfoViewModel)obj);
+        }
+
+        private void ModifyPermissionsExecute(object obj)
+        {
+            OnModifyPermissionsCommand.Invoke(this, (FileInfoViewModel)obj);
         }
     }
 }

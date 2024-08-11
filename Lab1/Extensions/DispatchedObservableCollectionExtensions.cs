@@ -57,7 +57,7 @@ namespace Lab1.Extensions
             var taskOptions = TaskCreationOptions.PreferFairness;
             //Zad 4.1 ODP: Zawsze jeden wątek (wszystkie mają ID głównego), dla TaskCreationOptions.None
             //Zad 4.2 ODP: Tyle nowych wątków, ile jest zadań, dla TaskCreationOptions.LongRunning
-            //Zad 4.3 ODP: Dowód w pliku 4.3_dowód.txt, dla TaskCreationOptions.PreferFairness
+            //Zad 4.3 ODP: Zadania wywoływane zawsze w kolejności planowania i dodawania do wątku, dla TaskCreationOptions.PreferFairness
 
             Action<int> taskAction = (int index) =>
             {

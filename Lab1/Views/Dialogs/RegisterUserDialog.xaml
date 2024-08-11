@@ -1,0 +1,35 @@
+﻿<Window x:Class="Lab1.Views.Dialogs.RegisterUserDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab1.Views.Dialogs"
+        mc:Ignorable="d"
+        Title="RegisterUserDialog" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=Login}"/>
+        <TextBox Name="loginTextBox" Margin="10" Grid.Row="0" Grid.Column="1"/>
+
+        <Label Grid.Row="1" Grid.Column="0" Content="{Binding Source={StaticResource Strings}, Path=Password}"/>
+        <PasswordBox Name="passwordBox" Margin="10" Grid.Row="1" Grid.Column="1"/>
+
+        <Label Grid.Row="2" Grid.Column="0"  Content="{Binding Source={StaticResource Strings}, Path=IP_address}"/>
+        <TextBox Name="ipTextBox" Margin="10" Grid.Row="2" Grid.Column="1"/>
+
+        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Grid.Row="3" Grid.Column="2">
+            <Button Width="100" Height="30" Click="Button_Click_Cancel"  Content="{Binding Source={StaticResource Strings}, Path=Cancel}"/>
+            <Button Width="100" Margin="10 0 0 0" Click="Button_Click_Ok" Height="30"  Content="{Binding Source={StaticResource Strings}, Path=Confirm}"/>
+        </StackPanel>
+    </Grid>
+</Window>

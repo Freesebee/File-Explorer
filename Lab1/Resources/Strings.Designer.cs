@@ -79,6 +79,24 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Is blocked.
+        /// </summary>
+        public static string Blocked {
+            get {
+                return ResourceManager.GetString("Blocked", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notify.
+        /// </summary>
+        public static string CanBeNotified {
+            get {
+                return ResourceManager.GetString("CanBeNotified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string Cancel {
@@ -97,11 +115,47 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Download.
+        /// </summary>
+        public static string CanDownload {
+            get {
+                return ResourceManager.GetString("CanDownload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Upload.
+        /// </summary>
+        public static string CanUpload {
+            get {
+                return ResourceManager.GetString("CanUpload", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirm.
         /// </summary>
         public static string Confirm {
             get {
                 return ResourceManager.GetString("Confirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contributor.
+        /// </summary>
+        public static string Contributor {
+            get {
+                return ResourceManager.GetString("Contributor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Coverage.
+        /// </summary>
+        public static string Coverage {
+            get {
+                return ResourceManager.GetString("Coverage", resourceCulture);
             }
         }
         
@@ -142,6 +196,15 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        public static string Description {
+            get {
+                return ResourceManager.GetString("Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorted directory.
         /// </summary>
         public static string Directory_sorted {
@@ -178,6 +241,87 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File created: .
+        /// </summary>
+        public static string File_created {
+            get {
+                return ResourceManager.GetString("File_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File deleted:.
+        /// </summary>
+        public static string File_deleted {
+            get {
+                return ResourceManager.GetString("File_deleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File &quot;{0}&quot; moved to &quot;{1}&quot;.
+        /// </summary>
+        public static string File_moved {
+            get {
+                return ResourceManager.GetString("File_moved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File &quot;{0}&quot; renamed to &quot;{1}&quot;.
+        /// </summary>
+        public static string File_renamed {
+            get {
+                return ResourceManager.GetString("File_renamed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Format.
+        /// </summary>
+        public static string Format {
+            get {
+                return ResourceManager.GetString("Format", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New local host &quot;{0}&quot; created.
+        /// </summary>
+        public static string Host_created {
+            get {
+                return ResourceManager.GetString("Host_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Identifier.
+        /// </summary>
+        public static string Identiefier {
+            get {
+                return ResourceManager.GetString("Identiefier", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IP address.
+        /// </summary>
+        public static string IP_address {
+            get {
+                return ResourceManager.GetString("IP_address", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        public static string Language {
+            get {
+                return ResourceManager.GetString("Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Loading.
         /// </summary>
         public static string Loading {
@@ -187,11 +331,56 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Login.
+        /// </summary>
+        public static string Login {
+            get {
+                return ResourceManager.GetString("Login", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modify metadata.
+        /// </summary>
+        public static string Modify_metadata {
+            get {
+                return ResourceManager.GetString("Modify_metadata", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permissions.
+        /// </summary>
+        public static string ModifyPermissions {
+            get {
+                return ResourceManager.GetString("ModifyPermissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Open directory.
         /// </summary>
         public static string Open_Directory {
             get {
                 return ResourceManager.GetString("Open_Directory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password.
+        /// </summary>
+        public static string Password {
+            get {
+                return ResourceManager.GetString("Password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Publisher.
+        /// </summary>
+        public static string Publisher {
+            get {
+                return ResourceManager.GetString("Publisher", resourceCulture);
             }
         }
         
@@ -210,6 +399,33 @@ namespace Lab1.Resources {
         public static string Ready {
             get {
                 return ResourceManager.GetString("Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Register.
+        /// </summary>
+        public static string Register {
+            get {
+                return ResourceManager.GetString("Register", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Relation.
+        /// </summary>
+        public static string Relation {
+            get {
+                return ResourceManager.GetString("Relation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rights.
+        /// </summary>
+        public static string Rights {
+            get {
+                return ResourceManager.GetString("Rights", resourceCulture);
             }
         }
         
@@ -268,11 +484,92 @@ namespace Lab1.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Source.
+        /// </summary>
+        public static string Source {
+            get {
+                return ResourceManager.GetString("Source", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subject.
+        /// </summary>
+        public static string Subject {
+            get {
+                return ResourceManager.GetString("Subject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Task cancelled.
         /// </summary>
         public static string Task_cancelled {
             get {
                 return ResourceManager.GetString("Task_cancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string Title {
+            get {
+                return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type.
+        /// </summary>
+        public static string Type {
+            get {
+                return ResourceManager.GetString("Type", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User.
+        /// </summary>
+        public static string User {
+            get {
+                return ResourceManager.GetString("User", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New user &quot;{0}&quot; created.
+        /// </summary>
+        public static string User_created {
+            get {
+                return ResourceManager.GetString("User_created", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show user list.
+        /// </summary>
+        public static string User_list {
+            get {
+                return ResourceManager.GetString("User_list", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User &quot;{0}&quot; signed in successfully.
+        /// </summary>
+        public static string User_signed_in {
+            get {
+                return ResourceManager.GetString("User_signed_in", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Users.
+        /// </summary>
+        public static string Users {
+            get {
+                return ResourceManager.GetString("Users", resourceCulture);
             }
         }
     }

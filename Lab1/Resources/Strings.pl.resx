@@ -189,4 +189,103 @@
   <data name="Task_cancelled" xml:space="preserve">
     <value>Zadanie anulowano</value>
   </data>
+  <data name="File_moved" xml:space="preserve">
+    <value>Plik "{0}" przeniesiono do "{1}"</value>
+  </data>
+  <data name="File_deleted" xml:space="preserve">
+    <value>Usunięto plik:</value>
+  </data>
+  <data name="File_created" xml:space="preserve">
+    <value>Utworzono plik:</value>
+  </data>
+  <data name="File_renamed" xml:space="preserve">
+    <value>Zmieniono nazwę pliku "{0}" na "{1}"</value>
+  </data>
+  <data name="User_created" xml:space="preserve">
+    <value>Utworzono nowego użytkownika "{0}"</value>
+  </data>
+  <data name="User_signed_in" xml:space="preserve">
+    <value>Użytkownik "{0}" pomyślnie zalogowany</value>
+  </data>
+  <data name="Host_created" xml:space="preserve">
+    <value>Utworzono nowego użytkownika lokalnego "{0}"</value>
+  </data>
+  <data name="Users" xml:space="preserve">
+    <value>Użytkownicy</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Zarejestruj</value>
+  </data>
+  <data name="User_list" xml:space="preserve">
+    <value>Wyświetl listę użytkowników</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Hasło</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="IP_address" xml:space="preserve">
+    <value>Adres IP</value>
+  </data>
+  <data name="Blocked" xml:space="preserve">
+    <value>Zablokowany</value>
+  </data>
+  <data name="Modify_metadata" xml:space="preserve">
+    <value>Modyfikuj metadane</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Tytuł</value>
+  </data>
+  <data name="Subject" xml:space="preserve">
+    <value>Temat</value>
+  </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Publikujący</value>
+  </data>
+  <data name="Contributor" xml:space="preserve">
+    <value>Uczestniczący</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="Format" xml:space="preserve">
+    <value>Rozszerzenie</value>
+  </data>
+  <data name="Identiefier" xml:space="preserve">
+    <value>Identyfikator</value>
+  </data>
+  <data name="Source" xml:space="preserve">
+    <value>Źródło</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Język</value>
+  </data>
+  <data name="Relation" xml:space="preserve">
+    <value>Relacja</value>
+  </data>
+  <data name="Coverage" xml:space="preserve">
+    <value>Pokrycie</value>
+  </data>
+  <data name="Rights" xml:space="preserve">
+    <value>Prawa</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Użytkownik</value>
+  </data>
+  <data name="CanDownload" xml:space="preserve">
+    <value>Pobieranie</value>
+  </data>
+  <data name="CanUpload" xml:space="preserve">
+    <value>Wysyłanie</value>
+  </data>
+  <data name="CanBeNotified" xml:space="preserve">
+    <value>Powiadomienie</value>
+  </data>
+  <data name="ModifyPermissions" xml:space="preserve">
+    <value>Uprawnienia</value>
+  </data>
 </root>

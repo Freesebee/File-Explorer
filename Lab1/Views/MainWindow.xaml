@@ -17,6 +17,12 @@
             <MenuItem 
                 Click="MenuItem_Click_Delete"
                 Header="{Binding Source={StaticResource Strings}, Path=Delete}"/>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Modify_metadata}"
+                Command="{Binding ModifyMetadataCommand}" 
+                CommandParameter="{Binding}"/>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=ModifyPermissions}"
+                Command="{Binding ModifyPermissionsCommand}" 
+                CommandParameter="{Binding}"/>
         </ContextMenu>
 
         <DataTemplate DataType="{x:Type local:FileInfoViewModel}">
@@ -67,6 +73,14 @@
                     Command="{Binding SortRootFolderCommand}"/>
                 <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Exit}" Click="MenuItem_Click_Exit"/>
             </MenuItem>
+            <MenuItem Header="{Binding Source={StaticResource Strings}, Path=Users}">
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=Register}"
+                    Command="{Binding RegisterUserCommand}"/>
+                <MenuItem 
+                    Header="{Binding Source={StaticResource Strings}, Path=User_list}"
+                    Command="{Binding ListUserCommand}"/>
+            </MenuItem>
         </Menu>
 
         <ToolBarPanel DockPanel.Dock="Top" Orientation="Horizontal" FlowDirection="RightToLeft" Background="{x:Static SystemColors.ControlLightBrush}">
@@ -106,9 +120,6 @@
             </TreeView>
 
             <StatusBar Grid.Row="1" Grid.ColumnSpan="2">
-                <StatusBarItem>
-                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
-                </StatusBarItem>
                 <Button Content="{Binding Source={StaticResource Strings}, Path=Cancel_task}" Command="{Binding CancelTaskCommand}">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -123,6 +134,9 @@
                 </Button>
                 <StatusBarItem>
                     <TextBlock Name="FileAttributesRash"></TextBlock>
+                </StatusBarItem>
+                <StatusBarItem>
+                    <TextBlock Text="{Binding StatusMessage}"></TextBlock>
                 </StatusBarItem>
             </StatusBar>
         </Grid>

@@ -1,0 +1,84 @@
+﻿<Window x:Class="Lab1.Views.Dialogs.MetadataDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Lab1.Views.Dialogs"
+        mc:Ignorable="d"
+        Title="MetadataDialog" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="18*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid Grid.Row="0" Name="metaDataGrid" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Title}" 
+                    Binding="{Binding Title}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Subject}" 
+                    Binding="{Binding Subject}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Publisher}" 
+                    Binding="{Binding Publisher}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Contributor}" 
+                    Binding="{Binding Contributor}" />
+
+                <DataGridTemplateColumn Header="{Binding Source={StaticResource Strings}, Path=Date}">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Date}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Type}" 
+                    Binding="{Binding Type}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Format}" 
+                    Binding="{Binding Format}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Identifier}" 
+                    Binding="{Binding Identifier}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Source}" 
+                    Binding="{Binding Source}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Language}" 
+                    Binding="{Binding Language}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Relation}" 
+                    Binding="{Binding Relation}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Coverage}" 
+                    Binding="{Binding Coverage}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Rights}" 
+                    Binding="{Binding Rights}" />
+
+                <DataGridTextColumn 
+                    Header="{Binding Source={StaticResource Strings}, Path=Description}" 
+                    Binding="{Binding Description}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel FlowDirection="RightToLeft" Orientation="Horizontal" Grid.Row="1">
+            <Button Width="100" Height="30" Click="Button_Click_Cancel" Content="{Binding Source={StaticResource Strings}, Path=Cancel}"/>
+            <Button Width="100" Margin="10 0 0 0" Click="Button_Click_Ok" Height="30" Content="{Binding Source={StaticResource Strings}, Path=Confirm}"/>
+        </StackPanel>
+    </Grid>
+</Window>
